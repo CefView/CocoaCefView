@@ -1,0 +1,6 @@
+.build.mac
+.DS_Store
+output
+build
+.build.mac
+/cmake-build-debug/

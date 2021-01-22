@@ -1,0 +1,1 @@
+cmake -G "Xcode" -S . -B .build.mac -DTARGET_ARCH=x86_64  -DUSE_SANDBOX=ON -DBUILD_DEMO=TRUE
