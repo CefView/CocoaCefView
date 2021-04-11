@@ -42,6 +42,7 @@ set_target_properties(CocoaCefView
     XCODE_ATTRIBUTE_COPY_PHASE_STRIP                            "NO"
     XCODE_ATTRIBUTE_DEAD_CODE_STRIPPING[variant=Release]        "YES"       # -Wl,-dead_strip
     XCODE_ATTRIBUTE_GCC_C_LANGUAGE_STANDARD                     "c99"       # -std=c99
+    XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER                   "com.cefview.cocoacefview"
 )
 
 target_include_directories(CocoaCefView PRIVATE

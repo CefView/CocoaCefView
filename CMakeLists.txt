@@ -23,7 +23,7 @@ set(CMAKE_C_STANDARD 11)
 # C++ standard
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_OSX_DEPLOYMENT_TARGET 10.9)
+set(CMAKE_OSX_DEPLOYMENT_TARGET 10.11)
 
 # Config the CEF
 ###############################################################
