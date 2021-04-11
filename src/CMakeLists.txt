@@ -59,26 +59,20 @@ target_link_libraries(CocoaCefView
     CefViewCore
 )
 
-add_custom_command(
-  TARGET CocoaCefView
+add_custom_command(TARGET CocoaCefView
   PRE_BUILD
+    #sign the cef framework
+    COMMAND 
+    codesign --force --sign - "$<TARGET_BUNDLE_DIR:CocoaCefView>/../Chromium Embedded Framework.framework"
 
-  #sign the cef framework
-  COMMAND 
-  codesign --force --sign - "$<TARGET_BUNDLE_DIR:CocoaCefView>/../Chromium Embedded Framework.framework"
-  VERBATIM
+    #copy the cef framework to resource directory
+    COMMAND 
+    ${CMAKE_COMMAND} -E copy_directory 
+    "$<TARGET_BUNDLE_DIR:CocoaCefView>/../Chromium Embedded Framework.framework"
+    "$<TARGET_FILE_DIR:CocoaCefView>/Resources/Chromium Embedded Framework.framework"
 
-  #copy the CefViewWing to resource directory
-  COMMAND 
-  ${CMAKE_COMMAND} -E copy_directory 
-  "$<TARGET_BUNDLE_DIR:CefViewWing>" 
-  "$<TARGET_FILE_DIR:CocoaCefView>/Resources/$<TARGET_NAME:CefViewWing>.app"
-  VERBATIM
-
-  #copy the cef framework to resource directory
-  COMMAND 
-  ${CMAKE_COMMAND} -E copy_directory 
-  "$<TARGET_BUNDLE_DIR:CocoaCefView>/../Chromium Embedded Framework.framework"
-  "$<TARGET_FILE_DIR:CocoaCefView>/Resources/Chromium Embedded Framework.framework"
-  VERBATIM
+    #copy the CefViewWing to resource directory
+    COMMAND cp -a 
+    \"$<TARGET_BUNDLE_DIR:CocoaCefView>/../CefViewWing\"*.app 
+    "$<TARGET_FILE_DIR:CocoaCefView>/Resources/"
 )

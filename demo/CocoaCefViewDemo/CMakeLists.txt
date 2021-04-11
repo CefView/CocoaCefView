@@ -52,13 +52,15 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 
 add_custom_command(
   TARGET ${PROJECT_NAME} POST_BUILD
-  COMMAND mkdir -p "$<TARGET_BUNDLE_CONTENT_DIR:${PROJECT_NAME}>/Frameworks"
+  # remove the old framework from the bundle if exists
+  COMMAND rm -fr "$<TARGET_BUNDLE_CONTENT_DIR:${PROJECT_NAME}>/Frameworks/CocoaCefView.framework"
 
-  COMMAND rm -fr "$<TARGET_BUNDLE_CONTENT_DIR:${PROJECT_NAME}>/Frameworks/$<TARGET_FILE_NAME:CocoaCefView>.framework"
-  COMMAND cp -a -f
-      "$<TARGET_BUNDLE_DIR:CocoaCefView>"
-      "$<TARGET_BUNDLE_CONTENT_DIR:${PROJECT_NAME}>/Frameworks/$<TARGET_FILE_NAME:CocoaCefView>.framework"
+  # copy the latest framework to the bundle
+  COMMAND ${CMAKE_COMMAND} -E copy_directory
+      "$<TARGET_BUNDLE_DIR:${PROJECT_NAME}>/../../CocoaCefView.framework"
+      "$<TARGET_BUNDLE_CONTENT_DIR:${PROJECT_NAME}>/Frameworks/CocoaCefView.framework"
   
+  # copy the web resource to the bundle
   COMMAND ${CMAKE_COMMAND} -E copy_directory
       "${CMAKE_CURRENT_SOURCE_DIR}/webres"
       "$<TARGET_BUNDLE_CONTENT_DIR:${PROJECT_NAME}>/Resources/webres"
