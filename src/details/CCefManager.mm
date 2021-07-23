@@ -15,6 +15,8 @@
 #define CEF_BINARY_NAME "Chromium Embedded Framework"
 #define HELPER_BUNDLE_NAME "CefViewWing.app"
 #define HELPER_BINARY_NAME "CefViewWing"
+#define COCOA_CEF_VIEW_FRAMEWORK_NAME "CocoaCefView.framework"
+#define RESOURCES "Resources"
 
 CCefManager::CCefManager()
 : bridgeObjectName()
@@ -158,12 +160,15 @@ const char *CCefManager::cefSubprocessPath() {
     return path.c_str();
 
   @autoreleasepool {
-    NSString *fxPath = [[NSBundle bundleForClass:CocoaCefSetting.class] resourcePath];
-    fxPath = [fxPath stringByAppendingPathComponent:@HELPER_BUNDLE_NAME];
-    fxPath = [fxPath stringByAppendingPathComponent:@"Contents"];
-    fxPath = [fxPath stringByAppendingPathComponent:@"MacOS"];
-    fxPath = [fxPath stringByAppendingPathComponent:@HELPER_BINARY_NAME];
-    path = fxPath.UTF8String;
+	  //NSString *fxPath = [[NSBundle bundleForClass:CocoaCefSetting.class] resourcePath];
+	  NSString *fxPath = [[NSBundle mainBundle] privateFrameworksPath];
+	  fxPath = [fxPath stringByAppendingPathComponent:@COCOA_CEF_VIEW_FRAMEWORK_NAME];
+	  fxPath = [fxPath stringByAppendingPathComponent:@RESOURCES];
+	  fxPath = [fxPath stringByAppendingPathComponent:@HELPER_BUNDLE_NAME];
+	  fxPath = [fxPath stringByAppendingPathComponent:@"Contents"];
+	  fxPath = [fxPath stringByAppendingPathComponent:@"MacOS"];
+	  fxPath = [fxPath stringByAppendingPathComponent:@HELPER_BINARY_NAME];
+	  path = fxPath.UTF8String;
   }
   return path.c_str();
 }
@@ -174,8 +179,11 @@ const char *CCefManager::cefFrameworkPath() {
     return path.c_str();
 
   @autoreleasepool {
-    NSString *fxPath = [[NSBundle bundleForClass:CocoaCefSetting.class] resourcePath];
-    fxPath = [fxPath stringByAppendingPathComponent:@CEF_FRAMEWORK_NAME];
+//    NSString *fxPath = [[NSBundle bundleForClass:CocoaCefSetting.class] resourcePath];
+	NSString *fxPath = [[NSBundle mainBundle] privateFrameworksPath];
+	fxPath = [fxPath stringByAppendingPathComponent:@COCOA_CEF_VIEW_FRAMEWORK_NAME];
+	fxPath = [fxPath stringByAppendingPathComponent:@RESOURCES];
+	fxPath = [fxPath stringByAppendingPathComponent:@CEF_FRAMEWORK_NAME];
     path = fxPath.UTF8String;
   }
   return path.c_str();

@@ -50,6 +50,10 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
   ${APPKIT_FRAMEWORK}
 )
 
+add_dependencies(${PROJECT_NAME}
+        CocoaCefView
+        )
+
 add_custom_command(
   TARGET ${PROJECT_NAME} POST_BUILD
   # remove the old framework from the bundle if exists
