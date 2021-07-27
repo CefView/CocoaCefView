@@ -40,6 +40,7 @@ set_target_properties(${PROJECT_NAME}
     MACOSX_BUNDLE_INFO_PLIST                  "${CocoaCefViewDemo_INFO_PLIST_FILE}"
     XCODE_ATTRIBUTE_LD_RUNPATH_SEARCH_PATHS   "@executable_path/../Frameworks"
     XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "com.cefview.cocoacefviewdemo"
+    XCODE_LINK_BUILD_PHASE_MODE KNOWN_LOCATION
 )
 
 find_library(COCOA_FRAMEWORK Cocoa)
@@ -49,10 +50,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
   ${COCOA_FRAMEWORK}
   ${APPKIT_FRAMEWORK}
 )
-
-add_dependencies(${PROJECT_NAME}
-        CocoaCefView
-        )
 
 add_custom_command(
   TARGET ${PROJECT_NAME} POST_BUILD
