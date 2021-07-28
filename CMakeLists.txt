@@ -1,7 +1,7 @@
 # 
 # The main config file for CocoaCef
 #
-cmake_minimum_required(VERSION 3.4.1)
+cmake_minimum_required(VERSION 3.19)
 project(CocoaCefView)
 
 # Only generate Debug and Release configuration types.
