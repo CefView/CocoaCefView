@@ -20,9 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CocoaCefContext ()
 
-@property CefRefPtr<CefViewBrowserClient> pClient;
+@property CefRefPtr<CefViewBrowserClient> cefBrowserClient;
 
-@property std::shared_ptr<CocoaCefClientDelegate> pClientDelegate;
+@property std::shared_ptr<CocoaCefClientDelegate> cefBrowserClientDelegate;
 
 - (void)scheduleCefLoopWork:(int64_t)delayMs;
 

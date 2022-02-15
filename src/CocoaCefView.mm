@@ -25,12 +25,13 @@
 #import "CocoaCefQuery+Internal.h"
 
 @implementation CocoaCefView {
+  CefRefPtr<CefBrowser> pCefBrowser_;
+
+  CocoaCefContext* _cefContext;
+  
   BOOL _movingWindow;
   NSBezierPath* _draggableRegion;
   NSBezierPath* _nonDraggableRegion;
-
-  CefRefPtr<CefBrowser> pCefBrowser_;
-  CocoaCefContext* pContext_;
 }
 
 #pragma mark-- initialization
@@ -46,7 +47,7 @@
   return self;
 }
 
-- (instancetype)initWithCoder:(NSCoder *)coder {
+- (instancetype)initWithCoder:(NSCoder*)coder {
   NSAssert([NSApp conformsToProtocol:@protocol(CefAppProtocol)],
            @"CefAppProtocol conformation requried, make sure current NSApplication inherits from CocoaCefApp");
   
@@ -63,37 +64,37 @@
   
   // Set window info
   CefWindowInfo window_info;
-  window_info.SetAsChild((__bridge void *)(self), 0, 0, self.frame.size.width, self.frame.size.height);
+  window_info.SetAsChild((__bridge void*)(self), 0, 0, self.frame.size.width, self.frame.size.height);
 
   CefBrowserSettings browserSettings;
   
   // Create the main browser window.
-  if (!CefBrowserHost::CreateBrowserSync(window_info,              // window info
+  auto pCefBrowser = CefBrowserHost::CreateBrowserSync(window_info,              // window info
                                          cefBrowserHandler,        // handler
                                          CefString("about:blank"), // url
                                          browserSettings,          // settings
                                          nullptr,
-                                         CefRequestContext::GetGlobalContext())) {
+                                         CefRequestContext::GetGlobalContext());
+  
+  if (!pCefBrowser) {
     return;
   }
-  
-  CCefManager::getInstance().registerBrowserHandler(cefBrowserHandler);
-  
-  _cefBrowserDelegate = cefBrowserDelegate;
-  _cefBrowserHandler = cefBrowserHandler;
+
+  // register view to client delegate
+  _cefContext.cefBrowserClientDelegate->insertBrowserViewMapping(pCefBrowser, this);
+
+  pCefBrowser_ = pCefBrowser;
 }
 
 - (void)dealloc {
-  if (_cefBrowserHandler) {
-    CCefManager::getInstance().removeBrowserHandler(_cefBrowserHandler);
-  }
+  _cefContext.cefBrowserClient->Delegate->removeBrowserHandler(_cefBrowserHandler);
 }
 
 - (BOOL) isFlipped {
   return TRUE;
 }
 
-- (NSView *)hitTest:(NSPoint)point {
+- (NSView*)hitTest:(NSPoint)point {
   NSPoint pt = [self convertPoint:point fromView:nil];
   if (_draggableRegion && [_draggableRegion containsPoint:pt]) {
     if (!_nonDraggableRegion || ![_nonDraggableRegion containsPoint:pt]) {
@@ -105,7 +106,7 @@
   return [super hitTest:point];
 }
 
-- (void)mouseDown:(NSEvent *)event {
+- (void)mouseDown:(NSEvent*)event {
   if (_movingWindow) {
     [self.window performWindowDragWithEvent:event];
     return;
@@ -114,18 +115,103 @@
   [super mouseDown:event];
 }
 
-- (void)mouseDragged:(NSEvent *)event {
+- (void)mouseDragged:(NSEvent*)event {
   if (_movingWindow)
     return;
   [super mouseDragged:event];
 }
 
-#pragma mark-- Browser Event Callbacks
+#pragma mark-- Browser Control Methods
+- (int)browserId {
 
-- (void)draggableRegionChanged:(NSBezierPath*)draggableRegion  NonDraggableRegion:(NSBezierPath*)nonDraggableRegion {
-  _draggableRegion = draggableRegion;
-  _nonDraggableRegion = nonDraggableRegion;
 }
+
+- (void)navigateToString:(NSString*)content {
+  if (pCefBrowser_) {
+    std::string data = [content UTF8String];
+    data = CefURIEncode(CefBase64Encode(data.c_str(), data.size()), false).ToString();
+    data = "data:text/html;base64," + data;
+    pCefBrowser_->GetMainFrame()->LoadURL(data);
+  }
+}
+
+- (void)navigateToUrl:(NSString*)url {
+  if (pCefBrowser_) {
+    CefString strUrl;
+    strUrl.FromString([url UTF8String]);
+    pCefBrowser_->GetMainFrame()->LoadURL(strUrl);
+  }
+}
+
+- (bool)browserCanGoBack {
+  if (pCefBrowser_) {
+    return pCefBrowser_->CanGoBack();
+  }
+  return false;
+}
+
+- (void)browserGoBack {
+  if (pCefBrowser_) {
+    pCefBrowser_->GoBack();
+  }
+}
+
+- (bool)browserCanGoForward {
+  if (pCefBrowser_) {
+    return pCefBrowser_->CanGoForward();
+  }
+  return false;
+}
+
+- (void)browserGoForward {
+  if (pCefBrowser_) {
+    pCefBrowser_->GoForward();
+  }
+}
+
+- (bool)browserIsLoading {
+  if (pCefBrowser_) {
+    return pCefBrowser_->IsLoading();
+  }
+  return false;
+}
+
+- (void)browserReload {
+  if (pCefBrowser_) {
+    pCefBrowser_->Reload();
+  }
+}
+
+- (void)browserStopLoad {
+  if (pCefBrowser_) {
+    pCefBrowser_->StopLoad();
+  }
+}
+
+- (bool)triggerEvent:(CocoaCefEvent*)event inFrame:(int)frameId {
+  if (![event.name length] || !pCefBrowser_) {
+    return false;
+  }
+
+  return [self sendEventNotifyMessage:frameId Event:event];
+}
+
+- (bool)broadcastEvent:(CocoaCefEvent*)event {
+  if (![event.name length] || !pCefBrowser_) {
+    return false;
+  }
+
+  return [self sendEventNotifyMessage:CefViewBrowserHandler::ALL_FRAMES Event:event];
+}
+
+- (bool)responseCefQuery:(CocoaCefQuery*)query {
+  if (pCefBrowser_) {
+    return _cefContext.cefBrowserClient->ResponseQuery(query.rid, query.success, query.response.UTF8String, query.error);
+  }
+  return false;
+}
+
+#pragma mark-- Browser Event Callbacks
 
 - (void)onLoadingStateChanged:(bool)isLoading CanGoBack:(bool)canGoBack CanGoForward:(bool)canGoForward {
 }
@@ -136,136 +222,51 @@
 - (void)onLoadEnd:(int)httpStatusCode {
 }
 
-- (bool)onLoadError:(int)errorCode ErrorMsg:(NSString *)errorMsg FailedUrl:(NSString *)failedUrl {
+- (bool)onLoadError:(int)errorCode ErrorMsg:(NSString*)errorMsg FailedUrl:(NSString*)failedUrl Handled:(bool&)handled {
   return false;
 }
 
-- (void)onCocoaCefUrlRequest:(NSString *)url {
+- (void)draggableRegionChanged:(NSBezierPath*)draggableRegion  NonDraggableRegion:(NSBezierPath*)nonDraggableRegion {
+  _draggableRegion = draggableRegion;
+  _nonDraggableRegion = nonDraggableRegion;
 }
 
-- (void)onCocoaCefQueryRequest:(CocoaCefQuery *)query {
+- (void)onAddressChanged:(int)frameId url:(NSString*)url {
+
 }
 
-- (void)onInvokeMethodNotify:(int)browserId
+- (void)onTitleChanged:(NSString*)title {
+
+}
+
+- (void)onFullscreenModeChanged:(bool)fullscreen {
+
+}
+
+- (void)onStatusMessage:(NSString*)message {
+
+}
+
+- (void)onConsoleMessage:(NSString*)message withLevel:(int)level {
+
+}
+
+- (void)onLoadingProgressChanged:(double)progress {
+
+}
+
+- (void)onCefQueryRequest:(int)browserId Frame:(int)frameId Query:(CocoaCefQuery*)query {
+}
+
+- (void)onInvokeMethod:(int)browserId
                      FrameId:(int)frameId
-                      Method:(NSString *)method
-                  Arguements:(NSArray *)arguments {
-}
-
-- (void)onConsoleMessage:(NSString*)message level:(int)level {
-}
-
-- (void)browserIsDestroying {
-  CCefManager::getInstance().removeBrowserHandler(_cefBrowserHandler);
-  _cefBrowserHandler = nullptr;
-}
-
-#pragma mark-- Browser Control Methods
-
-- (void)addLocalFolderResource:(NSString *)path forUrl:(NSString *)url {
-  if (_cefBrowserHandler) {
-    _cefBrowserHandler->AddLocalDirectoryResourceProvider(path.UTF8String, url.UTF8String);
-  }
-}
-
-- (void)addArchiveResource:(NSString *)path forUrl:(NSString *)url password:(NSString *)password {
-  if (_cefBrowserHandler) {
-    _cefBrowserHandler->AddArchiveResourceProvider(path.UTF8String, url.UTF8String, password.UTF8String);
-  }
-}
-
-- (bool)addCookie:(NSString*)name withValue:(NSString*)value ofDomain:(NSString*)domain forUrl:(NSString*)url {
-  return CCefManager::getInstance().addCookie([name UTF8String], [value UTF8String], [domain UTF8String], [url UTF8String]);
-}
-
-- (void)navigateToString:(NSString *)content {
-  if (_cefBrowserHandler) {
-    std::string data = [content UTF8String];
-    data = CefURIEncode(CefBase64Encode(data.c_str(), data.size()), false).ToString();
-    data = "data:text/html;base64," + data;
-    _cefBrowserHandler->GetBrowser()->GetMainFrame()->LoadURL(data);
-  }
-}
-
-- (void)navigateToUrl:(NSString *)url {
-  if (_cefBrowserHandler) {
-    CefString strUrl;
-    strUrl.FromString([url UTF8String]);
-    _cefBrowserHandler->GetBrowser()->GetMainFrame()->LoadURL(strUrl);
-  }
-}
-
-- (bool)browserCanGoBack {
-  if (_cefBrowserHandler) {
-    return _cefBrowserHandler->GetBrowser()->CanGoBack();
-  }
-  return false;
-}
-
-- (void)browserGoBack {
-  if (_cefBrowserHandler) {
-    _cefBrowserHandler->GetBrowser()->GoBack();
-  }
-}
-
-- (bool)browserCanGoForward {
-  if (_cefBrowserHandler) {
-    return _cefBrowserHandler->GetBrowser()->CanGoForward();
-  }
-  return false;
-}
-
-- (void)browserGoForward {
-  if (_cefBrowserHandler) {
-    _cefBrowserHandler->GetBrowser()->GoForward();
-  }
-}
-
-- (bool)browserIsLoading {
-  if (_cefBrowserHandler) {
-    return _cefBrowserHandler->GetBrowser()->IsLoading();
-  }
-  return false;
-}
-
-- (void)browserReload {
-  if (_cefBrowserHandler) {
-    _cefBrowserHandler->GetBrowser()->Reload();
-  }
-}
-
-- (void)browserStopLoad {
-  if (_cefBrowserHandler) {
-    _cefBrowserHandler->GetBrowser()->StopLoad();
-  }
-}
-
-- (bool)triggerEvent:(CocoaCefEvent *)event inFrame:(int)frameId {
-  if (![event.name length] || !_cefBrowserHandler) {
-    return false;
-  }
-
-  return [self sendEventNotifyMessage:frameId Event:event];
-}
-
-- (bool)broadcastEvent:(CocoaCefEvent *)event {
-  if (![event.name length] || !_cefBrowserHandler) {
-    return false;
-  }
-
-  return [self sendEventNotifyMessage:CefViewBrowserHandler::ALL_FRAMES Event:event];
-}
-
-- (bool)responseCefQuery:(CocoaCefQuery *)query {
-  if (_cefBrowserHandler) {
-    return _cefBrowserHandler->ResponseQuery(query.rid, query.success, query.response.UTF8String, query.error);
-  }
-  return false;
+                      Method:(NSString*)method
+                  Arguements:(NSArray*)arguments {
 }
 
 #pragma mark-- Private Helper Methods
 
-- (bool)sendEventNotifyMessage:(int)frameId Event:(CocoaCefEvent *)event {
+- (bool)sendEventNotifyMessage:(int)frameId Event:(CocoaCefEvent*)event {
   if (!_cefBrowserHandler)
     return false;
 
@@ -288,25 +289,25 @@
 
   @autoreleasepool {
     [event
-        enumerateAllValuesUsingBlock:^(NSString *_Nonnull key, CocoaCefEventValue *_Nonnull val, BOOL *_Nonnull stop) {
+        enumerateAllValuesUsingBlock:^(NSString* _Nonnull key, CocoaCefEventValue* _Nonnull val, BOOL* _Nonnull stop) {
           if (val.type == kCocoaCefString) {
             // string (utf-8)
-            dict->SetString(CefString([key UTF8String]), CefString([(NSString *)val.value UTF8String]));
+            dict->SetString(CefString([key UTF8String]), CefString([(NSString*)val.value UTF8String]));
           } else if (val.type == kCocoaCefBinary) {
             // data
-            NSData *data = (NSData *)val.value;
+            NSData* data = (NSData*)val.value;
             dict->SetBinary(CefString([key UTF8String]), CefBinaryValue::Create([data bytes], [data length]));
           } else if (val.type == kCocoaCefBoolean) {
             // bool
-            NSNumber *number = (NSNumber *)val.value;
+            NSNumber* number = (NSNumber*)val.value;
             dict->SetBool(CefString([key UTF8String]), [number boolValue]);
           } else if (val.type == kCocoaCefInteger) {
             // int
-            NSNumber *number = (NSNumber *)val.value;
+            NSNumber* number = (NSNumber*)val.value;
             dict->SetInt(CefString([key UTF8String]), [number intValue]);
           } else if (val.type == kCocoaCefDouble) {
             // double
-            NSNumber *number = (NSNumber *)val.value;
+            NSNumber* number = (NSNumber*)val.value;
             dict->SetDouble(CefString([key UTF8String]), [number doubleValue]);
           }
         }];
