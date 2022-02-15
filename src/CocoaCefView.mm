@@ -5,7 +5,9 @@
 //  Created by Sheen Tian on 2020/6/10.
 //
 #import <CocoaCefView/CocoaCefView.h>
-#import "details/CocoaCefView+Internal.h"
+
+#import "CocoaCefContext+Internal.h"
+#import "CocoaCefView+Internal.h"
 
 #pragma region cef_headers
 #include <include/cef_app.h>
@@ -20,18 +22,15 @@
 
 #import <CefViewCoreProtocol.h>
 
-#import <CefViewBrowserHandler.h>
-
-#import "details/CCefManager.h"
-#import "details/CocoaCefClientDelegate.h"
-#import "details/CocoaCefQuery+Internal.h"
+#import "CocoaCefQuery+Internal.h"
 
 @implementation CocoaCefView {
   BOOL _movingWindow;
   NSBezierPath* _draggableRegion;
   NSBezierPath* _nonDraggableRegion;
-  CefRefPtr<CefViewBrowserHandler> _cefBrowserHandler;
-  CefViewBrowserHandlerDelegateInterface::RefPtr _cefBrowserDelegate;
+
+  CefRefPtr<CefBrowser> pCefBrowser_;
+  CocoaCefContext* pContext_;
 }
 
 #pragma mark-- initialization
@@ -62,17 +61,12 @@
   _movingWindow = FALSE;
   _draggableRegion = nullptr;
   
-  // create the browser delegate
-  CefViewBrowserHandlerDelegateInterface::RefPtr cefBrowserDelegate = std::make_shared<CocoaCefDelegate>((__bridge void *)self);
-
-  // Create the browser
-  CefRefPtr<CefViewBrowserHandler> cefBrowserHandler = new CefViewBrowserHandler(cefBrowserDelegate);
-
   // Set window info
   CefWindowInfo window_info;
   window_info.SetAsChild((__bridge void *)(self), 0, 0, self.frame.size.width, self.frame.size.height);
 
   CefBrowserSettings browserSettings;
+  
   // Create the main browser window.
   if (!CefBrowserHost::CreateBrowserSync(window_info,              // window info
                                          cefBrowserHandler,        // handler

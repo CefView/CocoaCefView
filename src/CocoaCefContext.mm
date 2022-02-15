@@ -5,9 +5,11 @@
 //  Created by Sheen Tian Shen on 2022/2/15.
 //
 
-#import "CocoaCefContext.h"
+#import <CocoaCefView/CocoaCefContext.h>
+#import <CocoaCefView/CocoaCefConfig.h>
 
 #import <Cocoa/Cocoa.h>
+#import <crt_externs.h>
 #import <objc/runtime.h>
 
 #pragma region cef_headers
@@ -19,7 +21,9 @@
 #include <CefViewBrowserApp.h>
 #include <CefViewBrowserClient.h>
 
-#include "details/CocoaCefClientDelegate.h"
+#include "CocoaCefAppDelegate.h"
+
+#import "CocoaCefConfig+Internal.h"
 
 #define CEF_BINARY_NAME "Chromium Embedded Framework"
 #define CEF_FRAMEWORK_NAME "Chromium Embedded Framework.framework"
@@ -162,10 +166,7 @@ static CocoaCefContext* sharedInstance_;
 
 @implementation CocoaCefContext {
   CefRefPtr<CefViewBrowserApp> pApp_;
-  std::shared_ptr<CCefAppDelegate> pAppDelegate_;
-  
-  CefRefPtr<CefViewBrowserClient> pClient_;
-  std::shared_ptr<CocoaCefClientDelegate> pClientDelegate_;
+  std::shared_ptr<CocoaCefAppDelegate> pAppDelegate_;
 }
 
 + (nonnull id)sharedInstance {
@@ -205,7 +206,7 @@ static CocoaCefContext* sharedInstance_;
   // Build CefSettings
   CefSettings cef_settings;
   if (config)
-    config->CopyToCefSettings(cef_settings);
+    [config copyToCefSettings:cef_settings];
   
   // fixed values
   CefString(&cef_settings.framework_dir_path) = cefFrameworkPath();
@@ -219,9 +220,10 @@ static CocoaCefContext* sharedInstance_;
 #endif
   
   // Initialize CEF.
-  CefMainArgs main_args(config->argc, config->argv);
-  auto appDelegate = std::make_shared<CCefAppDelegate>(this);
-  auto app = new CefViewBrowserApp(config->bridgeObjectName_, appDelegate);
+  CefMainArgs main_args(*_NSGetArgc(), *_NSGetArgv());
+  auto appDelegate = std::make_shared<CocoaCefAppDelegate>((__bridge void*)self);
+  
+  auto app = new CefViewBrowserApp([[config bridgeObjectName] UTF8String], appDelegate);
   if (!CefInitialize(main_args, cef_settings, app, nullptr)) {
     assert(0);
     return false;
@@ -247,15 +249,19 @@ static CocoaCefContext* sharedInstance_;
 }
 
 - (void)addLocalFolderResource:(nonnull NSString *)path forUrl:(nonnull NSString *)url withPriority:(int)priority {
-  <#code#>;
+  
 }
 
 - (void)addLocalArchiveResource:(nonnull NSString *)path forUrl:(nonnull NSString *)url withPassword:(int)pwd {
-  <#code#>;
+  
 }
 
 - (void)addCookie:(nonnull NSString *)name withValue:(nonnull NSString *)value forDomain:(nonnull NSString *)domain andUrl:(nonnull NSString *)url { 
-  <#code#>;
+  
+}
+
+- (void)scheduleCefLoopWork:(int64_t)delayMs {
+  
 }
 
 @end

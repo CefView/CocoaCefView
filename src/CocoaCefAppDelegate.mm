@@ -7,6 +7,11 @@
 
 #import "CocoaCefAppDelegate.h"
 
-@implementation CocoaCefAppDelegate
+CocoaCefAppDelegate::CocoaCefAppDelegate(void* context)
+: _context((__bridge CocoaCefContext*)context) {
+}
 
-@end
+
+void CocoaCefAppDelegate::OnScheduleMessageLoopWork(int64_t delay_ms) {
+  [_context scheduleCefLoopWork:delay_ms];
+}

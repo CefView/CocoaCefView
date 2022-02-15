@@ -9,35 +9,49 @@
 #define CocoaCefSetting_h
 
 #import <Foundation/Foundation.h>
+#import <Cocoa/Cocoa.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface CocoaCefSetting : NSObject
 
-/// The debug port. 0 disables remote debug.
-@property uint16_t debugPort;
+// string
+@property NSString* standardFontFamily;
+@property NSString* fixedFontFamily;
+@property NSString* serifFontFamily;
+@property NSString* sansSerifFontFamily;
+@property NSString* cursiveFontFamily;
+@property NSString* fantasyFontFamily;
+@property NSString* defaultEncoding;
+@property NSString* acceptLanguageList;
 
-/// 0xAARRGGBB
-@property uint32_t backgroundColor;
+// int
+@property NSNumber* windowlessFrameRate;
+@property NSNumber* defaultFontSize;
+@property NSNumber* defaultFixedFontSize;
+@property NSNumber* minimumFontSize;
+@property NSNumber* minimumLogicalFontSize;
 
-/// The cache root path.
-@property (copy) NSString* cacheRootPath;
+// optional boolean
+@property NSNumber* remoteFonts;
+@property NSNumber* javascript;
+@property NSNumber* javascriptCloseWindows;
+@property NSNumber* javascriptAccessClipboard;
+@property NSNumber* javascriptDomPaste;
+@property NSNumber* plugins;
+@property NSNumber* universalAccessFromFileUrls;
+@property NSNumber* fileAccessFromFileUrls;
+@property NSNumber* webSecurity;
+@property NSNumber* imageLoading;
+@property NSNumber* imageShrinkStandaloneToFit;
+@property NSNumber* textAreaResize;
+@property NSNumber* tabToLinks;
+@property NSNumber* localStorage;
+@property NSNumber* databases;
+@property NSNumber* applicationCache;
+@property NSNumber* webgl;
 
-/// The cache path.
-@property (copy) NSString* cachePath;
-
-/// The bridge object name.
-@property (copy) NSString* bridgeObjectName;
-
-/// Gets the default instance.
-+ (nonnull CocoaCefSetting*)defaultInstance;
-
-/// Adds cross origin allow list entry.
-/// @param sourceOrigin The source origin
-/// @param targetProtocol The target protocol
-/// @param targetDomain The target domain
-/// @param allowSubdomains Indicates whether to allow the sub domain or not
-+ (bool)addCrossOriginAllowlistEntry:(NSString*)sourceOrigin TargetProtocol:(NSString*)targetProtocol TargetDomain:(NSString*)targetDomain AllowSubDomain:(bool)allowSubdomains;
+@property NSColor* backgroundColor;
 
 @end
 

@@ -5,7 +5,7 @@
 //  Created by Sheen Tian on 2020/6/18.
 //
 
-#import <CocoaCefView/CocoaCef.h>
+#import <CocoaCefView/CocoaCefQuery.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

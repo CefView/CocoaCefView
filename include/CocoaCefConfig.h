@@ -9,6 +9,7 @@
 #define CocoaCefConfig_h
 
 #import <Foundation/Foundation.h>
+#import <Cocoa/Cocoa.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -16,16 +17,16 @@ NS_ASSUME_NONNULL_BEGIN
 @interface CocoaCefConfig : NSObject
 
 /// <#Description#>
-@property int logLevel;
+@property NSNumber* logLevel;
 
 /// short
-@property short remoteDebuggingport;
+@property NSNumber* remoteDebuggingport;
 
 /// boolean
-@property BOOL persistSessionCookies;
+@property NSNumber* persistSessionCookies;
 
 /// boolean
-@property BOOL persistUserPreferences;
+@property NSNumber* persistUserPreferences;
 
 /// <#Description#>
 @property NSString* local;
