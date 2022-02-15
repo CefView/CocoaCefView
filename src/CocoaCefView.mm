@@ -1,5 +1,5 @@
 //
-//  CocoaCefView.m
+//  CocoaCefView.mm
 //  CocoaCef
 //
 //  Created by Sheen Tian on 2020/6/10.
@@ -23,7 +23,7 @@
 #import <CefViewBrowserHandler.h>
 
 #import "details/CCefManager.h"
-#import "details/CocoaCefDelegate.h"
+#import "details/CocoaCefClientDelegate.h"
 #import "details/CocoaCefQuery+Internal.h"
 
 @implementation CocoaCefView {

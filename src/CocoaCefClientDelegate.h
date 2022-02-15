@@ -14,7 +14,7 @@
 #include <include/cef_app.h>
 #pragma endregion cef_headers
 
-#include <CefViewBrowserHandlerDelegate.h>
+#include <CefViewBrowserClientDelegate.h>
 
 #include <CocoaCefView/CocoaCefQuery.h>
 #include <CocoaCefView/CocoaCefView.h>
@@ -23,9 +23,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-class CocoaCefDelegate : public CefViewBrowserHandlerDelegateInterface {
+class CocoaCefClientDelegate : public CefViewBrowserClientDelegateInterface {
 public:
-  CocoaCefDelegate(void *host);
+  CocoaCefClientDelegate(void *host);
     
   void setBrowserWindowId(CefWindowHandle win) override;
 

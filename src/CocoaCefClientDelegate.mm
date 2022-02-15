@@ -5,26 +5,26 @@
 //  Created by START-TEST on 1/24/21.
 //
 
-#import "CocoaCefDelegate.h"
+#import "CocoaCefClientDelegate.h"
 
 #include "CocoaCefView+Internal.h"
 #include "CocoaCefQuery+Internal.h"
 
-CocoaCefDelegate::CocoaCefDelegate(void *host) : _host((__bridge CocoaCefView *)host) {}
+CocoaCefClientDelegate::CocoaCefClientDelegate(void *host) : _host((__bridge CocoaCefView *)host) {}
 
-void CocoaCefDelegate::setBrowserWindowId(CefWindowHandle /* win */) {
+void CocoaCefClientDelegate::setBrowserWindowId(CefWindowHandle /* win */) {
     // currently not use
 }
 
-void CocoaCefDelegate::loadingStateChanged(bool isLoading, bool canGoBack, bool canGoForward) {
+void CocoaCefClientDelegate::loadingStateChanged(bool isLoading, bool canGoBack, bool canGoForward) {
   [_host onLoadingStateChanged:isLoading CanGoBack:canGoBack CanGoForward:canGoBack];
 }
 
-void CocoaCefDelegate::loadStart() { [_host onLoadStart]; }
+void CocoaCefClientDelegate::loadStart() { [_host onLoadStart]; }
 
-void CocoaCefDelegate::loadEnd(int httpStatusCode) { [_host onLoadEnd:httpStatusCode]; }
+void CocoaCefClientDelegate::loadEnd(int httpStatusCode) { [_host onLoadEnd:httpStatusCode]; }
 
-void CocoaCefDelegate::loadError(int errorCode, const std::string &errorMsg, const std::string &failedUrl, bool &handled) {
+void CocoaCefClientDelegate::loadError(int errorCode, const std::string &errorMsg, const std::string &failedUrl, bool &handled) {
   @autoreleasepool {
     NSString *strMsg = [NSString stringWithUTF8String:errorMsg.c_str()];
     NSString *strUrl = [NSString stringWithUTF8String:failedUrl.c_str()];
@@ -32,7 +32,7 @@ void CocoaCefDelegate::loadError(int errorCode, const std::string &errorMsg, con
   }
 }
 
-void CocoaCefDelegate::draggableRegionChanged(const std::vector<CefDraggableRegion>& regions) {
+void CocoaCefClientDelegate::draggableRegionChanged(const std::vector<CefDraggableRegion>& regions) {
   NSBezierPath* draggableRegion = [NSBezierPath bezierPath];
   NSBezierPath* nonDraggableRegion = [NSBezierPath bezierPath];
   for (auto it = regions.begin(); it != regions.end(); ++it) {
@@ -53,24 +53,24 @@ void CocoaCefDelegate::draggableRegionChanged(const std::vector<CefDraggableRegi
   [_host draggableRegionChanged:draggableRegion NonDraggableRegion:nonDraggableRegion];
 }
 
-void CocoaCefDelegate::consoleMessage(const std::string& message, int level) {
+void CocoaCefClientDelegate::consoleMessage(const std::string& message, int level) {
   @autoreleasepool {
     [_host onConsoleMessage:[NSString stringWithUTF8String:message.c_str()] level:level];
   }
 }
 
-void CocoaCefDelegate::takeFocus(bool next) {
+void CocoaCefClientDelegate::takeFocus(bool next) {
 
 }
 
-void CocoaCefDelegate::processUrlRequest(const std::string &url) {
+void CocoaCefClientDelegate::processUrlRequest(const std::string &url) {
 @autoreleasepool {
   NSString *strUrl = [NSString stringWithUTF8String:url.c_str()];
   [_host onCocoaCefUrlRequest:strUrl];
 }
 }
 
-void CocoaCefDelegate::processQueryRequest(const std::string &query, const int64_t query_id) {
+void CocoaCefClientDelegate::processQueryRequest(const std::string &query, const int64_t query_id) {
   @autoreleasepool {
     NSString *strQuery = [NSString stringWithUTF8String:query.c_str()];
     CocoaCefQuery *q = [[CocoaCefQuery alloc] init];
@@ -80,7 +80,7 @@ void CocoaCefDelegate::processQueryRequest(const std::string &query, const int64
   }
 }
 
-void CocoaCefDelegate::invokeMethodNotify(int browserId, int frameId, const std::string &method,
+void CocoaCefClientDelegate::invokeMethodNotify(int browserId, int frameId, const std::string &method,
                       const CefRefPtr<CefListValue> &arguments) {
   @autoreleasepool {
     NSString *strMethod = [NSString stringWithUTF8String:method.c_str()];
@@ -111,7 +111,7 @@ void CocoaCefDelegate::invokeMethodNotify(int browserId, int frameId, const std:
   }
 }
 
-void CocoaCefDelegate::browserIsDestroying() {
+void CocoaCefClientDelegate::browserIsDestroying() {
   [_host browserIsDestroying];
 }
 

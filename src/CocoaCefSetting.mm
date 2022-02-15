@@ -1,5 +1,5 @@
 //
-//  CocoaCefSetting.m
+//  CocoaCefSetting.mm
 //  CocoaCef
 //
 //  Created by Sheen Tian on 2020/6/10.

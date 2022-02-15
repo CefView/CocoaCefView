@@ -7,7 +7,8 @@
 
 #import <Foundation/Foundation.h>
 
-#import <CocoaCefView/CocoaCefApp.h>
+#import <CocoaCefView/CocoaCefConfig.h>
+#import <CocoaCefView/CocoaCefContext.h>
 #import <CocoaCefView/CocoaCefEvent.h>
 #import <CocoaCefView/CocoaCefQuery.h>
 #import <CocoaCefView/CocoaCefSetting.h>
