@@ -164,9 +164,13 @@ freeCefLibrary()
 
 static CocoaCefContext* sharedInstance_;
 
+const int64_t kCefWorkerIntervalMs = (1000 / 60); // 60 fps
+
 @implementation CocoaCefContext {
   CefRefPtr<CefViewBrowserApp> pApp_;
   std::shared_ptr<CocoaCefAppDelegate> pAppDelegate_;
+  
+  NSTimer* _cefWorkerTimer;
 }
 
 + (nonnull id)sharedInstance {
@@ -189,6 +193,8 @@ static CocoaCefContext* sharedInstance_;
   if (self = [super init]) {
     if (![self initCefContext:config])
       return nil;
+    
+    _cefWorkerTimer = [NSTimer timerWithTimeInterval:kCefWorkerIntervalMs target:self selector:@selector(performCefWork:) userInfo:nil repeats:YES];
   }
   return self;
 }
@@ -232,10 +238,16 @@ static CocoaCefContext* sharedInstance_;
   pApp_ = app;
   pAppDelegate_ = appDelegate;
   
+  _cefBrowserClientDelegate = std::make_shared<CocoaCefClientDelegate>();
+  _cefBrowserClient = new CefViewBrowserClient(_cefBrowserClientDelegate);
+  
   return true;
 }
 
 - (void)uninitCefContext {
+  _cefBrowserClient = nullptr;
+  _cefBrowserClientDelegate = nullptr;
+  
   if (!pApp_)
     return;
   
@@ -261,7 +273,12 @@ static CocoaCefContext* sharedInstance_;
 }
 
 - (void)scheduleCefLoopWork:(int64_t)delayMs {
-  
+  auto delay = fmax((int64_t)0, fmin(delayMs, kCefWorkerIntervalMs));
+  [NSTimer timerWithTimeInterval:delay target:self selector:@selector(performCefWork:) userInfo:nil repeats:NO];
+}
+
+- (void)performCefWork:(NSTimer*)timer {
+  CefDoMessageLoopWork();
 }
 
 @end

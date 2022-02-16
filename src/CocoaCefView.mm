@@ -62,6 +62,8 @@
   _movingWindow = FALSE;
   _draggableRegion = nullptr;
   
+  _cefContext = [CocoaCefContext sharedInstance];
+  
   // Set window info
   CefWindowInfo window_info;
   window_info.SetAsChild((__bridge void*)(self), 0, 0, self.frame.size.width, self.frame.size.height);
@@ -81,7 +83,7 @@
   }
   
   // register view to client delegate
-  _cefContext.cefBrowserClientDelegate->insertBrowserViewMapping(pCefBrowser, (__bridge void*)(self));
+  _cefContext.cefBrowserClientDelegate->insertBrowserViewMapping(pCefBrowser, self);
   
   pCefBrowser_ = pCefBrowser;
 }

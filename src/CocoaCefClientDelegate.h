@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 class CocoaCefClientDelegate : public CefViewBrowserClientDelegateInterface {
 private:
-  std::unordered_map<int, void*> view_map_;
+  std::unordered_map<int, CocoaCefView*> view_map_;
 
 public:
   CocoaCefClientDelegate();
@@ -36,32 +36,9 @@ protected:
   CocoaCefView* take(CefRefPtr<CefBrowser>& browser);
   
 public:
-  void insertBrowserViewMapping(CefRefPtr<CefBrowser>& browser, void* view);
+  void insertBrowserViewMapping(CefRefPtr<CefBrowser>& browser, CocoaCefView* view);
 
   void removeBrowserViewMapping(CefRefPtr<CefBrowser>& browser);
-  
-  //  void setBrowserWindowId(CefWindowHandle win) override;
-  //
-  //  void loadingStateChanged(bool isLoading, bool canGoBack, bool canGoForward) override;
-  //
-  //  void loadStart() override;
-  //
-  //  void loadEnd(int httpStatusCode) override;
-  //
-  //  void loadError(int errorCode, const std::string &errorMsg, const std::string &failedUrl, bool &handled) override;
-  //
-  //  void draggableRegionChanged(const std::vector<CefDraggableRegion>& regions) override;
-  //
-  //  void consoleMessage(const std::string& message, int level) override;
-  //
-  //  void takeFocus(bool next) override;
-  //
-  //  void processQueryRequest(const std::string &query, const int64_t query_id) override ;
-  //
-  //  void invokeMethodNotify(int browserId, int frameId, const std::string &method,
-  //                          const CefRefPtr<CefListValue> &arguments) override;
-  //
-  //  void browserIsDestroying() override;
   
   void loadingStateChanged(CefRefPtr<CefBrowser> &browser, bool isLoading, bool canGoBack, bool canGoForward) override;
   

@@ -9,6 +9,12 @@
 
 @implementation CocoaCefQuery
 
++ (id)queryWithRequest:(NSString*)request AndId:(int64_t)rid {
+  CocoaCefQuery* instance = [[CocoaCefQuery alloc] init];
+  instance.rid = rid;
+  instance.request = [NSString stringWithString:request];
+}
+
 - (void)setRid:(int64_t)rid {
   _rid = rid;
 }
