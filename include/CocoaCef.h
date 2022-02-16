@@ -6,6 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <Cocoa/Cocoa.h>
 
 #import <CocoaCefView/CocoaCefConfig.h>
 #import <CocoaCefView/CocoaCefContext.h>

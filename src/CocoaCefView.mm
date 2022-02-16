@@ -26,7 +26,7 @@
 
 @implementation CocoaCefView {
   CefRefPtr<CefBrowser> pCefBrowser_;
-
+  
   CocoaCefContext* _cefContext;
   
   BOOL _movingWindow;
@@ -65,29 +65,29 @@
   // Set window info
   CefWindowInfo window_info;
   window_info.SetAsChild((__bridge void*)(self), 0, 0, self.frame.size.width, self.frame.size.height);
-
+  
   CefBrowserSettings browserSettings;
   
   // Create the main browser window.
-  auto pCefBrowser = CefBrowserHost::CreateBrowserSync(window_info,              // window info
-                                         cefBrowserHandler,        // handler
-                                         CefString("about:blank"), // url
-                                         browserSettings,          // settings
-                                         nullptr,
-                                         CefRequestContext::GetGlobalContext());
+  auto pCefBrowser = CefBrowserHost::CreateBrowserSync(window_info,                       // window info
+                                                       _cefContext.cefBrowserClient,      // handler
+                                                       CefString("about:blank"),          // url
+                                                       browserSettings,                   // settings
+                                                       nullptr,
+                                                       CefRequestContext::GetGlobalContext());
   
   if (!pCefBrowser) {
     return;
   }
-
+  
   // register view to client delegate
-  _cefContext.cefBrowserClientDelegate->insertBrowserViewMapping(pCefBrowser, this);
-
+  _cefContext.cefBrowserClientDelegate->insertBrowserViewMapping(pCefBrowser, (__bridge void*)(self));
+  
   pCefBrowser_ = pCefBrowser;
 }
 
 - (void)dealloc {
-  _cefContext.cefBrowserClient->Delegate->removeBrowserHandler(_cefBrowserHandler);
+  _cefContext.cefBrowserClientDelegate->removeBrowserViewMapping(pCefBrowser_);
 }
 
 - (BOOL) isFlipped {
@@ -123,7 +123,7 @@
 
 #pragma mark-- Browser Control Methods
 - (int)browserId {
-
+  
 }
 
 - (void)navigateToString:(NSString*)content {
@@ -188,11 +188,15 @@
   }
 }
 
+- (bool)triggerEvent:(CocoaCefEvent*)event {
+  return false;
+}
+
 - (bool)triggerEvent:(CocoaCefEvent*)event inFrame:(int)frameId {
   if (![event.name length] || !pCefBrowser_) {
     return false;
   }
-
+  
   return [self sendEventNotifyMessage:frameId Event:event];
 }
 
@@ -200,8 +204,8 @@
   if (![event.name length] || !pCefBrowser_) {
     return false;
   }
-
-  return [self sendEventNotifyMessage:CefViewBrowserHandler::ALL_FRAMES Event:event];
+  
+  return [self sendEventNotifyMessage:CefViewBrowserClient::ALL_FRAMES Event:event];
 }
 
 - (bool)responseCefQuery:(CocoaCefQuery*)query {
@@ -226,96 +230,90 @@
   return false;
 }
 
-- (void)draggableRegionChanged:(NSBezierPath*)draggableRegion  NonDraggableRegion:(NSBezierPath*)nonDraggableRegion {
+- (void)onDraggableRegionChanged:(NSBezierPath*)draggableRegion  NonDraggableRegion:(NSBezierPath*)nonDraggableRegion {
   _draggableRegion = draggableRegion;
   _nonDraggableRegion = nonDraggableRegion;
 }
 
 - (void)onAddressChanged:(int)frameId url:(NSString*)url {
-
+  
 }
 
 - (void)onTitleChanged:(NSString*)title {
-
+  
 }
 
 - (void)onFullscreenModeChanged:(bool)fullscreen {
-
+  
 }
 
 - (void)onStatusMessage:(NSString*)message {
-
+  
 }
 
 - (void)onConsoleMessage:(NSString*)message withLevel:(int)level {
-
+  
 }
 
 - (void)onLoadingProgressChanged:(double)progress {
-
+  
 }
 
 - (void)onCefQueryRequest:(int)browserId Frame:(int)frameId Query:(CocoaCefQuery*)query {
 }
 
-- (void)onInvokeMethod:(int)browserId
-                     FrameId:(int)frameId
-                      Method:(NSString*)method
-                  Arguements:(NSArray*)arguments {
+- (void)onInvokeMethod:(int)browserId Frame:(int)frameId Method:(NSString*)method Arguments:(NSArray*)arguments {
 }
 
 #pragma mark-- Private Helper Methods
 
 - (bool)sendEventNotifyMessage:(int)frameId Event:(CocoaCefEvent*)event {
-  if (!_cefBrowserHandler)
-    return false;
-
   // create the event notify message
   CefRefPtr<CefProcessMessage> msg = CefProcessMessage::Create(TRIGGEREVENT_NOTIFY_MESSAGE);
   CefRefPtr<CefListValue> arguments = msg->GetArgumentList();
-
+  
   int idx = 0;
-
+  
   // set event name
   CefString eventName = [event.name UTF8String];
   arguments->SetString(idx++, eventName);
-
+  
   // create parameter object
   CefRefPtr<CefDictionaryValue> dict = CefDictionaryValue::Create();
-
+  
   // add event name to the parameter object
   CefString cefStr = [event.name UTF8String];
   dict->SetString("_event_name_", cefStr);
-
+  
   @autoreleasepool {
     [event
-        enumerateAllValuesUsingBlock:^(NSString* _Nonnull key, CocoaCefEventValue* _Nonnull val, BOOL* _Nonnull stop) {
-          if (val.type == kCocoaCefString) {
-            // string (utf-8)
-            dict->SetString(CefString([key UTF8String]), CefString([(NSString*)val.value UTF8String]));
-          } else if (val.type == kCocoaCefBinary) {
-            // data
-            NSData* data = (NSData*)val.value;
-            dict->SetBinary(CefString([key UTF8String]), CefBinaryValue::Create([data bytes], [data length]));
-          } else if (val.type == kCocoaCefBoolean) {
-            // bool
-            NSNumber* number = (NSNumber*)val.value;
-            dict->SetBool(CefString([key UTF8String]), [number boolValue]);
-          } else if (val.type == kCocoaCefInteger) {
-            // int
-            NSNumber* number = (NSNumber*)val.value;
-            dict->SetInt(CefString([key UTF8String]), [number intValue]);
-          } else if (val.type == kCocoaCefDouble) {
-            // double
-            NSNumber* number = (NSNumber*)val.value;
-            dict->SetDouble(CefString([key UTF8String]), [number doubleValue]);
-          }
-        }];
+     enumerateAllValuesUsingBlock:^(NSString* _Nonnull key, CocoaCefEventValue* _Nonnull val, BOOL* _Nonnull stop) {
+      if (val.type == kCocoaCefString) {
+        // string (utf-8)
+        dict->SetString(CefString([key UTF8String]), CefString([(NSString*)val.value UTF8String]));
+      } else if (val.type == kCocoaCefBinary) {
+        // data
+        NSData* data = (NSData*)val.value;
+        dict->SetBinary(CefString([key UTF8String]), CefBinaryValue::Create([data bytes], [data length]));
+      } else if (val.type == kCocoaCefBoolean) {
+        // bool
+        NSNumber* number = (NSNumber*)val.value;
+        dict->SetBool(CefString([key UTF8String]), [number boolValue]);
+      } else if (val.type == kCocoaCefInteger) {
+        // int
+        NSNumber* number = (NSNumber*)val.value;
+        dict->SetInt(CefString([key UTF8String]), [number intValue]);
+      } else if (val.type == kCocoaCefDouble) {
+        // double
+        NSNumber* number = (NSNumber*)val.value;
+        dict->SetDouble(CefString([key UTF8String]), [number doubleValue]);
+      }
+    }];
   }
-
+  
   // add parameter object to the message
   arguments->SetDictionary(idx++, dict);
-  return _cefBrowserHandler->TriggerEvent(frameId, msg);
+  return _cefContext.cefBrowserClient->TriggerEvent(pCefBrowser_, frameId, msg);
 }
 
 @end

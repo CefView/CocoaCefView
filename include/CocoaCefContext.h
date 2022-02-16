@@ -8,9 +8,9 @@
 #ifndef CocoaCefContext_h
 #define CocoaCefContext_h
 
-
 #import <Foundation/Foundation.h>
-#import <CocoaCefConfig.h>
+#import <Cocoa/Cocoa.h>
+#import <CocoaCefView/CocoaCefConfig.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

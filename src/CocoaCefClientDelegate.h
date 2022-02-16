@@ -9,6 +9,9 @@
 
 #pragma region std_headers
 #include <memory>
+#include <string>
+#include <unordered_map>
+#include <vector>
 #pragma endregion std_headers
 
 #pragma region cef_headers
@@ -23,8 +26,19 @@
 NS_ASSUME_NONNULL_BEGIN
 
 class CocoaCefClientDelegate : public CefViewBrowserClientDelegateInterface {
+private:
+  std::unordered_map<int, void*> view_map_;
+
 public:
-  CocoaCefClientDelegate(void *host);
+  CocoaCefClientDelegate();
+
+protected:
+  CocoaCefView* take(CefRefPtr<CefBrowser>& browser);
+  
+public:
+  void insertBrowserViewMapping(CefRefPtr<CefBrowser>& browser, void* view);
+
+  void removeBrowserViewMapping(CefRefPtr<CefBrowser>& browser);
   
   //  void setBrowserWindowId(CefWindowHandle win) override;
   //
@@ -100,9 +114,6 @@ public:
   void OnPopupSize(CefRefPtr<CefBrowser> browser, const CefRect &rect) override;
   
   void OnPaint(CefRefPtr<CefBrowser> browser, CefRenderHandler::PaintElementType type, const CefRenderHandler::RectList &dirtyRects, const void *buffer, int width, int height) override;
-  
-private:
-  CocoaCefView *__weak _host;
 };
 
 NS_ASSUME_NONNULL_END

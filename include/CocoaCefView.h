@@ -8,11 +8,10 @@
 #ifndef CocoaCefView_h
 #define CocoaCefView_h
 
-#import <Cocoa/Cocoa.h>
 #import <Foundation/Foundation.h>
-
-#import <CocoaCefView/CocoaCefEvent.h>
+#import <Cocoa/Cocoa.h>
 #import <CocoaCefView/CocoaCefSetting.h>
+#import <CocoaCefView/CocoaCefEvent.h>
 #import <CocoaCefView/CocoaCefQuery.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -31,14 +30,14 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)browserReload;
 - (void)browserStopLoad;
 - (bool)triggerEvent:(CocoaCefEvent*)event;
-- (bool)triggerEvent:(CocoaCefEvent*)event toFrame:(int)frameId;
+- (bool)triggerEvent:(CocoaCefEvent*)event inFrame:(int)frameId;
 - (bool)broadcastEvent:(CocoaCefEvent*)event;
-- (bool)responseQCefQuery:(CocoaCefQuery*)query;
+- (bool)responseCefQuery:(CocoaCefQuery*)query;
 
 - (void)onLoadingStateChanged:(bool)isLoading CanGoBack:(bool)canGoBack CanGoForward:(bool)canGoForward;
 - (void)onLoadStart;
 - (void)onLoadEnd:(int)httpStatusCode;
-- (bool)onLoadError:(int)errorCode ErrorMsg:(NSString *)errorMsg FailedUrl:(NSString *)failedUrl Handled:(bool&)handled;
+- (bool)onLoadError:(int)errorCode ErrorMsg:(NSString*)errorMsg FailedUrl:(NSString*)failedUrl Handled:(bool&)handled;
 - (void)onDraggableRegionChanged:(NSBezierPath*)draggableRegion  NonDraggableRegion:(NSBezierPath*)nonDraggableRegion;
 - (void)onAddressChanged:(int)frameId url:(NSString*)url;
 - (void)onTitleChanged:(NSString*)title;

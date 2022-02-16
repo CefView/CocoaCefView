@@ -12,7 +12,12 @@
 int main(int argc, const char *argv[]) {
   @autoreleasepool {
     // Setup code that might create autoreleased objects goes here.
+    CocoaCefConfig* cefConfig = [[CocoaCefConfig alloc] init];
+    cefConfig.bridgeObjectName = @"CallBridge";
+    cefConfig.remoteDebuggingport = [NSNumber numberWithInt:9000];
+    cefConfig.backgroundColor = [NSColor cyanColor];
+    
+    CocoaCefContext* cefContext = [CocoaCefContext contextWithConfig:cefConfig];
   }
-  return CocoaCefApplicationMain(argc, argv);
-  //return NSApplicationMain(argc, argv);
+  return NSApplicationMain(argc, argv);
 }

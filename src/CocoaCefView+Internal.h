@@ -16,11 +16,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark -- internal methods
 
-- (void)draggableRegionChanged:(NSBezierPath*)draggableRegion NonDraggableRegion:(NSBezierPath*)nonDraggableRegion;
-
-/// Checks whether the browser is loading
-- (void)browserIsDestroying;
-
 @end
 
 NS_ASSUME_NONNULL_END

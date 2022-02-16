@@ -10,8 +10,19 @@
 #include "CocoaCefView+Internal.h"
 #include "CocoaCefQuery+Internal.h"
 
-CocoaCefClientDelegate::CocoaCefClientDelegate(void *host)
-: _host((__bridge CocoaCefView *)host) {}
+CocoaCefClientDelegate::CocoaCefClientDelegate() {}
+
+CocoaCefView* CocoaCefClientDelegate::take(CefRefPtr<CefBrowser>& browser){
+  
+}
+
+void CocoaCefClientDelegate::insertBrowserViewMapping(CefRefPtr<CefBrowser>& browser, void* view){
+  
+}
+
+void CocoaCefClientDelegate::removeBrowserViewMapping(CefRefPtr<CefBrowser>& browser){
+  
+}
 
 void CocoaCefClientDelegate::loadingStateChanged(CefRefPtr<CefBrowser> &browser, bool isLoading, bool canGoBack, bool canGoForward) { 
   
