@@ -13,19 +13,29 @@
 CocoaCefClientDelegate::CocoaCefClientDelegate() {}
 
 CocoaCefView* CocoaCefClientDelegate::take(CefRefPtr<CefBrowser>& browser){
-  
+  if (!browser)
+    return nullptr;
+  auto it = view_map_.find(browser->GetIdentifier());
+  if (it == view_map_.end())
+    return nullptr;
+
+  return it->second;
 }
 
 void CocoaCefClientDelegate::insertBrowserViewMapping(CefRefPtr<CefBrowser>& browser, void* view){
-  
+  auto id = browser->GetIdentifier();
+  view_map_[id] = view;  
 }
 
 void CocoaCefClientDelegate::removeBrowserViewMapping(CefRefPtr<CefBrowser>& browser){
-  
+  auto id = browser->GetIdentifier();
+  view_map_.erase(id);  
 }
 
 void CocoaCefClientDelegate::loadingStateChanged(CefRefPtr<CefBrowser> &browser, bool isLoading, bool canGoBack, bool canGoForward) { 
-  
+  auto p = take(browser);
+  if (p)
+    [p loadingStateChanged(isLoading, canGoBack, canGoForward)];
 }
 
 
