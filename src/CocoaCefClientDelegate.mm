@@ -91,25 +91,25 @@ void CocoaCefClientDelegate::draggableRegionChanged(CefRefPtr<CefBrowser> &brows
 }
 
 
-void CocoaCefClientDelegate::addressChanged(CefRefPtr<CefBrowser> &browser, int frameId, const CefString &url) { 
+void CocoaCefClientDelegate::addressChanged(CefRefPtr<CefBrowser> &browser, int frameId, const std::string &url) { 
   CocoaCefView* p = take(browser);
   @autoreleasepool {
-    NSString* u = [NSString stringWithUTF8String:url.ToString().c_str()];
+    NSString* u = [NSString stringWithUTF8String:url.c_str()];
     [p onAddressChanged:frameId url:u];
   }
 }
 
 
-void CocoaCefClientDelegate::titleChanged(CefRefPtr<CefBrowser> &browser, const CefString &title) { 
+void CocoaCefClientDelegate::titleChanged(CefRefPtr<CefBrowser> &browser, const std::string &title) { 
   CocoaCefView* p = take(browser);
   @autoreleasepool {
-    NSString* t = [NSString stringWithUTF8String:title.ToString().c_str()];
+    NSString* t = [NSString stringWithUTF8String:title.c_str()];
     [p onTitleChanged:t];
   }
 }
 
 
-bool CocoaCefClientDelegate::tooltipMessage(CefRefPtr<CefBrowser> &browser, const CefString &text) { 
+bool CocoaCefClientDelegate::tooltipMessage(CefRefPtr<CefBrowser> &browser, const std::string &text) { 
   CocoaCefView* p = take(browser);
   return false;
 }
@@ -123,10 +123,10 @@ void CocoaCefClientDelegate::fullscreenModeChanged(CefRefPtr<CefBrowser> &browse
 }
 
 
-void CocoaCefClientDelegate::statusMessage(CefRefPtr<CefBrowser> &browser, const CefString &value) { 
+void CocoaCefClientDelegate::statusMessage(CefRefPtr<CefBrowser> &browser, const std::string &value) { 
   CocoaCefView* p = take(browser);
   @autoreleasepool {
-    NSString* msg = [NSString stringWithUTF8String:value.ToString().c_str()];
+    NSString* msg = [NSString stringWithUTF8String:value.c_str()];
     [p onStatusMessage:msg];
   }
 }

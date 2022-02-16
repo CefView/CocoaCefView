@@ -50,15 +50,15 @@ public:
   
   void draggableRegionChanged(CefRefPtr<CefBrowser> &browser, const std::vector<CefDraggableRegion> &regions) override;
   
-  void addressChanged(CefRefPtr<CefBrowser> &browser, int frameId, const CefString &url) override;
+  void addressChanged(CefRefPtr<CefBrowser> &browser, int frameId, const std::string &url) override;
   
-  void titleChanged(CefRefPtr<CefBrowser> &browser, const CefString &title) override;
+  void titleChanged(CefRefPtr<CefBrowser> &browser, const std::string &title) override;
   
-  bool tooltipMessage(CefRefPtr<CefBrowser> &browser, const CefString &text) override;
+  bool tooltipMessage(CefRefPtr<CefBrowser> &browser, const std::string &text) override;
   
   void fullscreenModeChanged(CefRefPtr<CefBrowser> &browser, bool fullscreen) override;
   
-  void statusMessage(CefRefPtr<CefBrowser> &browser, const CefString &value) override;
+  void statusMessage(CefRefPtr<CefBrowser> &browser, const std::string &value) override;
   
   void loadingProgressChanged(CefRefPtr<CefBrowser> &browser, double progress) override;
   
