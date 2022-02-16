@@ -125,7 +125,7 @@
 
 #pragma mark-- Browser Control Methods
 - (int)browserId {
-  
+  return pCefBrowser_->GetIdentifier();
 }
 
 - (void)navigateToString:(NSString*)content {
