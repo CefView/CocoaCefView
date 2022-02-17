@@ -39,7 +39,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param value <#value description#>
 /// @param domain <#domain description#>
 /// @param url <#url description#>
-- (void)addCookie:(NSString*)name withValue:(NSString *)value forDomain:(NSString*)domain andUrl:(NSString*)url;
+/// @return 
+- (bool)addCookie:(NSString*)name withValue:(NSString *)value forDomain:(NSString*)domain andUrl:(NSString*)url;
 
 @end
 

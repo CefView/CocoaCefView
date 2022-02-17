@@ -50,7 +50,7 @@
   
   NSString *webroot = [[[NSBundle mainBundle] resourcePath]
       stringByAppendingPathComponent:@FEAPP_FOLDER];
-//  [self addLocalFolderResource:webroot forUrl:@FEAPP_BASE_URL];
+  [[CocoaCefContext sharedInstance] addLocalFolderResource:webroot forUrl:@FEAPP_BASE_URL]];
 
   NSURL *indexUrl =
       [NSURL URLWithString:@FEAPP_INDEX

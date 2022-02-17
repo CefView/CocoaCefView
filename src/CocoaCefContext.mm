@@ -279,15 +279,19 @@ static CocoaCefContext* sharedInstance_;
 }
 
 - (void)addLocalFolderResource:(nonnull NSString *)path forUrl:(nonnull NSString *)url withPriority:(int)priority {
-  
+  _cefBrowserClient->AddLocalDirectoryResourceProvider(path.UTF8String, url.UTF8String);
 }
 
 - (void)addLocalArchiveResource:(nonnull NSString *)path forUrl:(nonnull NSString *)url withPassword:(int)pwd {
-  
+  _cefBrowserClient->AddArchiveResourceProvider(path.UTF8String, url.UTF8String, password.UTF8String);
 }
 
-- (void)addCookie:(nonnull NSString *)name withValue:(nonnull NSString *)value forDomain:(nonnull NSString *)domain andUrl:(nonnull NSString *)url { 
-  
+- (bool)addCookie:(nonnull NSString *)name withValue:(nonnull NSString *)value forDomain:(nonnull NSString *)domain andUrl:(nonnull NSString *)url { 
+  CefCookie cookie;
+  CefString(&cookie.name).FromString(name.UTF8String);
+  CefString(&cookie.value).FromString(value.UTF8String);
+  CefString(&cookie.domain).FromString(domain.UTF8String);
+  return CefCookieManager::GetGlobalManager(nullptr)->SetCookie(CefString(url), cookie, nullptr);
 }
 
 - (void)scheduleCefLoopWork:(int64_t)delayMs {
