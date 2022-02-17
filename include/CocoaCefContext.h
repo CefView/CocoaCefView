@@ -32,7 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param path <#path description#>
 /// @param url <#url description#>
 /// @param pwd <#pwd description#>
-- (void)addLocalArchiveResource:(NSString*)path forUrl:(NSString *)url withPassword:(int)pwd;
+- (void)addLocalArchiveResource:(NSString*)path forUrl:(NSString *)url withPassword:(NSString *)pwd withPriority:(int)priority;
 
 /// <#Description#>
 /// @param name <#name description#>

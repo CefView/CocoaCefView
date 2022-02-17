@@ -13,6 +13,7 @@
   CocoaCefQuery* instance = [[CocoaCefQuery alloc] init];
   instance.rid = rid;
   instance.request = [NSString stringWithString:request];
+  return instance;
 }
 
 - (void)setRid:(int64_t)rid {
