@@ -81,7 +81,7 @@ bool g_handling_send_event = false;
   // swizzle the run method
   Method original_run = class_getInstanceMethod(self, @selector(run));
   Method swizzled_run = class_getInstanceMethod(self, @selector(_swizzled_run));
-  method_exchangeImplementations(original_terminate, swizzled_terminate);
+  method_exchangeImplementations(original_run, swizzled_run);
 }
 
 - (BOOL)isHandlingSendEvent {
@@ -104,7 +104,7 @@ bool g_handling_send_event = false;
 }
 
 - (void)_swizzled_run {
-  CefRunMessageLoop();
+  [self _swizzled_run];
 }
 @end
 
@@ -174,7 +174,7 @@ freeCefLibrary()
 
 static CocoaCefContext* sharedInstance_;
 
-const int64_t kCefWorkerIntervalMs = (1000 / 60); // 60 fps
+const NSTimeInterval kCefWorkerIntervalSeconds = ((1000.f / 60) / 1000); // 60 fps
 
 @implementation CocoaCefContext {
   CefRefPtr<CefViewBrowserApp> pApp_;
@@ -204,7 +204,7 @@ const int64_t kCefWorkerIntervalMs = (1000 / 60); // 60 fps
     if (![self initCefContext:config])
       return nil;
     
-    _cefWorkerTimer = [NSTimer timerWithTimeInterval:kCefWorkerIntervalMs target:self selector:@selector(performCefWork:) userInfo:nil repeats:YES];
+    _cefWorkerTimer = [NSTimer timerWithTimeInterval:kCefWorkerIntervalSeconds target:self selector:@selector(performCefWork:) userInfo:nil repeats:YES];
   }
   return self;
 }
@@ -283,7 +283,7 @@ const int64_t kCefWorkerIntervalMs = (1000 / 60); // 60 fps
 }
 
 - (void)scheduleCefLoopWork:(int64_t)delayMs {
-  auto delay = fmax((int64_t)0, fmin(delayMs, kCefWorkerIntervalMs));
+  auto delay = (fmax((int64_t)0, fmin(delayMs, kCefWorkerIntervalSeconds * 1000))) / 1000;
   [NSTimer timerWithTimeInterval:delay target:self selector:@selector(performCefWork:) userInfo:nil repeats:NO];
 }
 

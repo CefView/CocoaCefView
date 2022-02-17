@@ -37,9 +37,6 @@
 #pragma mark-- initialization
 
 - (instancetype)initWithFrame:(NSRect)frameRect {
-  NSAssert([NSApp conformsToProtocol:@protocol(CefAppProtocol)],
-           @"CefAppProtocol conformation requried, make sure current NSApplication inherits from CocoaCefApp");
-  
   self = [super initWithFrame:frameRect];
   if (self) {
     [self setupCocoaCefView];
@@ -48,9 +45,6 @@
 }
 
 - (instancetype)initWithCoder:(NSCoder*)coder {
-  NSAssert([NSApp conformsToProtocol:@protocol(CefAppProtocol)],
-           @"CefAppProtocol conformation requried, make sure current NSApplication inherits from CocoaCefApp");
-  
   self = [super initWithCoder:coder];
   if (self) {
     [self setupCocoaCefView];
