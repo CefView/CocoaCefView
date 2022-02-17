@@ -78,7 +78,17 @@ bool g_handling_send_event = false;
   Method swizzled_terminate = class_getInstanceMethod(self, @selector(_swizzled_terminate:));
   method_exchangeImplementations(original_terminate, swizzled_terminate);
 
-  // swizzle the run method
+  // swizzle the run method to catch the first invocation of run method
+  [self swizzleRunMethod];
+}
+
+- (void)sizzleRunMethod {
+  Method original_run = class_getInstanceMethod(self, @selector(run));
+  Method swizzled_run = class_getInstanceMethod(self, @selector(_swizzled_run));
+  method_exchangeImplementations(original_run, swizzled_run);
+}
+
+- (void)restoreRunMethod {
   Method original_run = class_getInstanceMethod(self, @selector(run));
   Method swizzled_run = class_getInstanceMethod(self, @selector(_swizzled_run));
   method_exchangeImplementations(original_run, swizzled_run);
@@ -104,7 +114,11 @@ bool g_handling_send_event = false;
 }
 
 - (void)_swizzled_run {
-  [self _swizzled_run];
+  // restore the run method so that the CefRunMessageLoop() can call the correct run method
+  [self restoreRunMethod];
+
+  // start cef message loop
+  CefRunMessageLoop();
 }
 @end
 
