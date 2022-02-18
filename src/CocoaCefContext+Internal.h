@@ -24,6 +24,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property std::shared_ptr<CocoaCefClientDelegate> cefBrowserClientDelegate;
 
+- (void)closeAllBrowsers;
+
 - (void)scheduleCefLoopWork:(int64_t)delayMs;
 
 @end

@@ -33,6 +33,12 @@ void CocoaCefClientDelegate::removeBrowserViewMapping(CefRefPtr<CefBrowser>& bro
   view_map_.erase(id);  
 }
 
+bool CocoaCefClientDelegate::doClose(CefRefPtr<CefBrowser> browser) {
+  NSView* view = (__bridge NSView*)(browser->GetHost()->GetWindowHandle());
+  [view removeFromSuperview];
+  return false;
+}
+
 void CocoaCefClientDelegate::loadingStateChanged(CefRefPtr<CefBrowser> &browser, bool isLoading, bool canGoBack, bool canGoForward) { 
   CocoaCefView* p = take(browser);
   @autoreleasepool {

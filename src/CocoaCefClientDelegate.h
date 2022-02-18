@@ -40,6 +40,8 @@ public:
 
   void removeBrowserViewMapping(CefRefPtr<CefBrowser>& browser);
   
+  bool doClose(CefRefPtr<CefBrowser> browser) override;
+  
   void loadingStateChanged(CefRefPtr<CefBrowser> &browser, bool isLoading, bool canGoBack, bool canGoForward) override;
   
   void loadStart(CefRefPtr<CefBrowser> &browser) override;

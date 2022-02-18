@@ -63,11 +63,12 @@ bool g_handling_send_event = false;
 - (void)_swizzled_sendEvent:(NSEvent *)event;
 - (void)_swizzled_terminate:(id)sender;
 - (void)_swizzled_run;
+- (void)_swizzled_replyToApplicationShouldTerminate:(BOOL)shouldTerminate;
 @end
 
 @implementation NSApplication (CocoaCefApp)
 // wraps sendEvent, terminate and run
-+ (void)load {
++ (void)swizzleMethods {
   // swizzle the sendEvent method
   Method original_sendEvent = class_getInstanceMethod(self, @selector(sendEvent:));
   Method swizzled_sendEvent = class_getInstanceMethod(self, @selector(_swizzled_sendEvent:));
@@ -77,6 +78,11 @@ bool g_handling_send_event = false;
   Method original_terminate = class_getInstanceMethod(self, @selector(terminate:));
   Method swizzled_terminate = class_getInstanceMethod(self, @selector(_swizzled_terminate:));
   method_exchangeImplementations(original_terminate, swizzled_terminate);
+  
+  // swizzle replyToApplicationShouldTerminate
+  Method original_replyToApplicationShouldTerminate = class_getInstanceMethod(self, @selector(replyToApplicationShouldTerminate:));
+  Method swizzled_replyToApplicationShouldTerminate = class_getInstanceMethod(self, @selector(_swizzled_replyToApplicationShouldTerminate:));
+  method_exchangeImplementations(original_replyToApplicationShouldTerminate, swizzled_replyToApplicationShouldTerminate);
 
   // swizzle the run method to catch the first invocation of run method
   [self swizzleRunMethod];
@@ -109,7 +115,6 @@ bool g_handling_send_event = false;
 }
 
 - (void)_swizzled_terminate:(id)sender {
-
   [self _swizzled_terminate:sender];
 }
 
@@ -119,11 +124,20 @@ bool g_handling_send_event = false;
 
   // start cef message loop
   CefRunMessageLoop();
-  
-  CefShutdown();
-  
-  [self run];
 }
+
+- (void)_swizzled_replyToApplicationShouldTerminate:(BOOL)shouldTerminate {
+  if (shouldTerminate) {
+    // simulate the terminate notification
+    NSNotification* n = [NSNotification notificationWithName:NSApplicationWillTerminateNotification
+                                                      object:nil];
+    [[self delegate] applicationWillTerminate:n];
+    [[CocoaCefContext sharedInstance] closeAllBrowsers];
+  }
+  
+  [self _swizzled_replyToApplicationShouldTerminate:NO];
+}
+
 @end
 
 const char*
@@ -263,6 +277,7 @@ static CocoaCefContext* sharedInstance_;
   _cefBrowserClientDelegate = std::make_shared<CocoaCefClientDelegate>();
   _cefBrowserClient = new CefViewBrowserClient(_cefBrowserClientDelegate);
   
+  [NSApplication swizzleMethods];
   return true;
 }
 
@@ -296,6 +311,10 @@ static CocoaCefContext* sharedInstance_;
   CefString(&cookie.value).FromString(value.UTF8String);
   CefString(&cookie.domain).FromString(domain.UTF8String);
   return CefCookieManager::GetGlobalManager(nullptr)->SetCookie(CefString(url.UTF8String), cookie, nullptr);
+}
+
+- (void)closeAllBrowsers {
+  _cefBrowserClient->CloseAllBrowsers();
 }
 
 - (void)scheduleCefLoopWork:(int64_t)delayMs {
