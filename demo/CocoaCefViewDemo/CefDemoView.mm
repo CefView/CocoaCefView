@@ -61,9 +61,8 @@
 
 - (void)changeBackgroundColor {
   CocoaCefEvent *event = [CocoaCefEvent initWithName:@"colorChange"];
-  [event setStringValue:[NSString stringWithFormat:@"#%06X",
-                                                   (arc4random() % 0xFFFFFF)]
-                 forKey:@"color"];
+  [event.arguments addObject:[NSString stringWithFormat:@"#%06X",
+                                                   (arc4random() % 0xFFFFFF)]];
   [self broadcastEvent:event];
 }
 

@@ -20,9 +20,10 @@
 #include <include/internal/cef_types_mac.h>
 #pragma endregion cef_headers
 
-#import <CefViewCoreProtocol.h>
+#include <CefViewCoreProtocol.h>
 
-#import "CocoaCefQuery+Internal.h"
+#include "CocoaCefQuery+Internal.h"
+#include "ValueConvertor.h"
 
 @implementation CocoaCefView {
   CefRefPtr<CefBrowser> pCefBrowser_;
@@ -274,8 +275,7 @@
 
   // set event arguments
   for (id arg in event.arguments) {
-    auto cVal = CefValue::Create();
-    ValueConvertor::NSValueToCefValue(cVal, &qV);
+    auto cVal =[ValueConvertor CefValueFromNSValue:arg];
     arguments->SetValue(idx++, cVal);
   }
 

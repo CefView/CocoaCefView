@@ -9,6 +9,7 @@
 
 #include "CocoaCefView+Internal.h"
 #include "CocoaCefQuery+Internal.h"
+#include "ValueConvertor.h"
 
 CocoaCefClientDelegate::CocoaCefClientDelegate() {}
 
@@ -194,33 +195,11 @@ void CocoaCefClientDelegate::invokeMethodNotify(CefRefPtr<CefBrowser> &browser, 
     // extract the arguments
     NSMutableArray *argsList = [[NSMutableArray alloc] init];
     for (int i = 0; i < arguments->GetSize(); i++) {
-      NSValue* oV;
       auto cV = arguments->GetValue(i);
-      ValueConvertor::CefValueToNSValue(&oV, cV);
+      NSObject* oV = [ValueConvertor NSValueFromCefValue:cV];
       [argsList addObject:oV];
     }
     
-    // extract the arguments
-    for (int idx = 0; idx < (int)arguments->GetSize(); idx++) {
-      if (CefValueType::VTYPE_NULL == arguments->GetType(idx)) {
-        [argsList addObject:[NSNumber numberWithInt:0]];
-      } else if (CefValueType::VTYPE_BOOL == arguments->GetType(idx)) {
-        [argsList addObject:[NSNumber numberWithBool:arguments->GetBool(idx)]];
-      } else if (CefValueType::VTYPE_INT == arguments->GetType(idx)) {
-        [argsList addObject:[NSNumber numberWithInt:arguments->GetInt(idx)]];
-      } else if (CefValueType::VTYPE_DOUBLE == arguments->GetType(idx)) {
-        [argsList addObject:[NSNumber numberWithDouble:arguments->GetDouble(idx)]];
-      } else if (CefValueType::VTYPE_STRING == arguments->GetType(idx)) {
-        auto v = arguments->GetString(idx).ToString();
-        [argsList addObject:[NSString stringWithUTF8String:v.c_str()]];
-      } else if (CefValueType::VTYPE_BINARY == arguments->GetType(idx)) {
-        auto v = arguments->GetBinary(idx);
-        std::vector<uint8_t> buf(v->GetSize(), 0);
-        v->GetData(buf.data(), buf.size(), 0);
-        [argsList addObject:[NSData dataWithBytes:buf.data() length:buf.size()]];
-      } else {
-      }
-    }
     [p onInvokeMethod:browser->GetIdentifier() Frame:frameId Method:strMethod Arguments:argsList];
   }
 }
