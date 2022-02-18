@@ -11,9 +11,7 @@
 
 @end
 
-@implementation CocoaCefEvent {
-  NSMutableDictionary *_dict;
-}
+@implementation CocoaCefEvent
 
 + (nonnull instancetype)initWithName:(nonnull NSString *)name {
   CocoaCefEvent *instance = [[CocoaCefEvent alloc] init];
@@ -23,7 +21,7 @@
 
 - (instancetype)init {
   if (self = [super init]) {
-    _dict = [[NSMutableDictionary alloc] init];
+    self.arguments = [[NSMutableArray alloc] init];
   }
   return self;
 }

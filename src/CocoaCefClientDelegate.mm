@@ -190,7 +190,15 @@ void CocoaCefClientDelegate::invokeMethodNotify(CefRefPtr<CefBrowser> &browser, 
   CocoaCefView* p = take(browser);
   @autoreleasepool {
     NSString *strMethod = [NSString stringWithUTF8String:method.c_str()];
+
+    // extract the arguments
     NSMutableArray *argsList = [[NSMutableArray alloc] init];
+    for (int i = 0; i < arguments->GetSize(); i++) {
+      NSValue* oV;
+      auto cV = arguments->GetValue(i);
+      ValueConvertor::CefValueToNSValue(&oV, cV);
+      [argsList addObject:oV];
+    }
     
     // extract the arguments
     for (int idx = 0; idx < (int)arguments->GetSize(); idx++) {

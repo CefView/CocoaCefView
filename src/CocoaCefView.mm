@@ -271,42 +271,14 @@
   int idx = 0;
   CefString eventName = [event.name UTF8String];
   arguments->SetString(idx++, eventName);
-  
-  // create parameter object
-  CefRefPtr<CefDictionaryValue> dict = CefDictionaryValue::Create();
-  
-  // add event name to the parameter object
-  CefString cefStr = [event.name UTF8String];
-  dict->SetString("_event_name_", cefStr);
-  
-  @autoreleasepool {
-    [event
-     enumerateAllValuesUsingBlock:^(NSString* _Nonnull key, CocoaCefEventValue* _Nonnull val, BOOL* _Nonnull stop) {
-      if (val.type == kCocoaCefString) {
-        // string (utf-8)
-        dict->SetString(CefString([key UTF8String]), CefString([(NSString*)val.value UTF8String]));
-      } else if (val.type == kCocoaCefBinary) {
-        // data
-        NSData* data = (NSData*)val.value;
-        dict->SetBinary(CefString([key UTF8String]), CefBinaryValue::Create([data bytes], [data length]));
-      } else if (val.type == kCocoaCefBoolean) {
-        // bool
-        NSNumber* number = (NSNumber*)val.value;
-        dict->SetBool(CefString([key UTF8String]), [number boolValue]);
-      } else if (val.type == kCocoaCefInteger) {
-        // int
-        NSNumber* number = (NSNumber*)val.value;
-        dict->SetInt(CefString([key UTF8String]), [number intValue]);
-      } else if (val.type == kCocoaCefDouble) {
-        // double
-        NSNumber* number = (NSNumber*)val.value;
-        dict->SetDouble(CefString([key UTF8String]), [number doubleValue]);
-      }
-    }];
+
+  // set event arguments
+  for (id arg in event.arguments) {
+    auto cVal = CefValue::Create();
+    ValueConvertor::NSValueToCefValue(cVal, &qV);
+    arguments->SetValue(idx++, cVal);
   }
-  
-  // add parameter object to the message
-  arguments->SetDictionary(idx++, dict);
+
   return _cefContext.cefBrowserClient->TriggerEvent(pCefBrowser_, frameId, msg);
 }
 
