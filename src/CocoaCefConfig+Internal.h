@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CocoaCefConfig ()
 
-- (void)copyToCefSettings:(CefSettings&)setting;
+- (void)copyToCefSettings:(CefSettings&)settings;
 
 @end
 

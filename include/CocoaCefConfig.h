@@ -29,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property NSNumber* persistUserPreferences;
 
 /// <#Description#>
-@property NSString* local;
+@property NSString* locale;
 
 /// <#Description#>
 @property NSString* userAgent;
