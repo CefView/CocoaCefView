@@ -93,11 +93,7 @@
   return false;
 }
 
-- (void)onCocoaCefUrlRequest:(NSString *)url {
-  FLog(@"");
-}
-
-- (void)onCocoaCefQueryRequest:(CocoaCefQuery *)query {
+- (void)onCefQueryRequest:(int)browserId Frame:(int)frameId Query:(CocoaCefQuery*)query {
   FLog(@"");
   NSString *reqeust = query.request;
   query.response = reqeust.uppercaseString;
@@ -106,10 +102,7 @@
   [self responseCefQuery:query];
 }
 
-- (void)onInvokeMethodNotify:(int)browserId
-                     FrameId:(int)frameId
-                      Method:(NSString *)method
-                  Arguements:(NSArray *)arguments {
+- (void)onInvokeMethod:(int)browserId Frame:(int)frameId Method:(NSString*)method Arguments:(NSArray*)arguments {
   FLog(@"");
   if ([method isEqual:@"TestMethod"]) {
     NSAlert *alert = [[NSAlert alloc] init];
@@ -127,7 +120,7 @@
   }
 }
 
-- (void)onConsoleMessage:(NSString*)message level:(int)level {
+- (void)onConsoleMessage:(NSString*)message withLevel:(int)level {
   NSLog(@"web log: %d, %@", level, message);
 }
 

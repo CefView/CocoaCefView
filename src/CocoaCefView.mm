@@ -269,8 +269,6 @@
   CefRefPtr<CefListValue> arguments = msg->GetArgumentList();
   
   int idx = 0;
-  
-  // set event name
   CefString eventName = [event.name UTF8String];
   arguments->SetString(idx++, eventName);
   

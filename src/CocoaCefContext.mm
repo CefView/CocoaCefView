@@ -119,6 +119,10 @@ bool g_handling_send_event = false;
 
   // start cef message loop
   CefRunMessageLoop();
+  
+  CefShutdown();
+  
+  [self run];
 }
 @end
 
