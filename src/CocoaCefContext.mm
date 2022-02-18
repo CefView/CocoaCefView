@@ -123,16 +123,21 @@ bool g_handling_send_event = false;
   [self.class restoreRunMethod];
 
   // start cef message loop
-  CefRunMessageLoop();
+  [[CocoaCefContext sharedInstance] runCefMessageLoop];
+  
+  // uninitialize cef context
+  [[CocoaCefContext sharedInstance] uninitCefContext];
 }
 
 - (void)_swizzled_replyToApplicationShouldTerminate:(BOOL)shouldTerminate {
   if (shouldTerminate) {
+    [[CocoaCefContext sharedInstance] closeAllBrowsers];
+    [[CocoaCefContext sharedInstance] quitCefMessageLoop];
+    
     // simulate the terminate notification
     NSNotification* n = [NSNotification notificationWithName:NSApplicationWillTerminateNotification
                                                       object:nil];
     [[self delegate] applicationWillTerminate:n];
-    [[CocoaCefContext sharedInstance] closeAllBrowsers];
   }
   
   [self _swizzled_replyToApplicationShouldTerminate:NO];
@@ -279,6 +284,14 @@ static CocoaCefContext* sharedInstance_;
   
   [NSApplication swizzleMethods];
   return true;
+}
+
+- (void)runCefMessageLoop {
+  CefRunMessageLoop();
+}
+
+- (void)quitCefMessageLoop {
+  CefQuitMessageLoop();
 }
 
 - (void)uninitCefContext {

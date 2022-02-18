@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 class CocoaCefClientDelegate : public CefViewBrowserClientDelegateInterface {
 private:
-  std::unordered_map<int, CocoaCefView*> view_map_;
+  std::unordered_map<int, void*> view_map_;
 
 public:
   CocoaCefClientDelegate();
@@ -36,7 +36,7 @@ protected:
   CocoaCefView* take(CefRefPtr<CefBrowser>& browser);
   
 public:
-  void insertBrowserViewMapping(CefRefPtr<CefBrowser>& browser, CocoaCefView* view);
+  void insertBrowserViewMapping(CefRefPtr<CefBrowser>& browser, void* view);
 
   void removeBrowserViewMapping(CefRefPtr<CefBrowser>& browser);
   

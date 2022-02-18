@@ -20,52 +20,54 @@ CocoaCefView* CocoaCefClientDelegate::take(CefRefPtr<CefBrowser>& browser){
   if (it == view_map_.end())
     return nullptr;
 
-  return it->second;
+  return (__bridge CocoaCefView*)(it->second);
 }
 
-void CocoaCefClientDelegate::insertBrowserViewMapping(CefRefPtr<CefBrowser>& browser, CocoaCefView* view){
+void CocoaCefClientDelegate::insertBrowserViewMapping(CefRefPtr<CefBrowser>& browser, void* view){
   auto bid = browser->GetIdentifier();
   view_map_[bid] = view;  
 }
 
 void CocoaCefClientDelegate::removeBrowserViewMapping(CefRefPtr<CefBrowser>& browser){
   auto id = browser->GetIdentifier();
-  view_map_.erase(id);  
+  view_map_.erase(id);
 }
 
 bool CocoaCefClientDelegate::doClose(CefRefPtr<CefBrowser> browser) {
-  NSView* view = (__bridge NSView*)(browser->GetHost()->GetWindowHandle());
-  [view removeFromSuperview];
+  @autoreleasepool {
+    CocoaCefView* p = take(browser);
+    [p removeFromSuperview];
+  }
   return false;
 }
 
-void CocoaCefClientDelegate::loadingStateChanged(CefRefPtr<CefBrowser> &browser, bool isLoading, bool canGoBack, bool canGoForward) { 
-  CocoaCefView* p = take(browser);
+void CocoaCefClientDelegate::loadingStateChanged(CefRefPtr<CefBrowser> &browser, bool isLoading, bool canGoBack, bool canGoForward) {
   @autoreleasepool {
+    CocoaCefView* p = take(browser);
     [p onLoadingStateChanged:isLoading CanGoBack:canGoBack CanGoForward:canGoForward];
   }
 }
 
 
-void CocoaCefClientDelegate::loadStart(CefRefPtr<CefBrowser> &browser) { 
-  CocoaCefView* p = take(browser);
+void CocoaCefClientDelegate::loadStart(CefRefPtr<CefBrowser> &browser) {
   @autoreleasepool {
+    CocoaCefView* p = take(browser);
     [p onLoadStart];
   }
 }
 
 
-void CocoaCefClientDelegate::loadEnd(CefRefPtr<CefBrowser> &browser, int httpStatusCode) { 
-  CocoaCefView* p = take(browser);
+void CocoaCefClientDelegate::loadEnd(CefRefPtr<CefBrowser> &browser, int httpStatusCode) {
   @autoreleasepool {
+    CocoaCefView* p = take(browser);
     [p onLoadEnd:httpStatusCode];
   }
 }
 
 
-void CocoaCefClientDelegate::loadError(CefRefPtr<CefBrowser> &browser, int errorCode, const std::string &errorMsg, const std::string &failedUrl, bool &handled) { 
-  CocoaCefView* p = take(browser);
+void CocoaCefClientDelegate::loadError(CefRefPtr<CefBrowser> &browser, int errorCode, const std::string &errorMsg, const std::string &failedUrl, bool &handled) {
   @autoreleasepool {
+    CocoaCefView* p = take(browser);
     NSString* msg = [NSString stringWithUTF8String:errorMsg.c_str()];
     NSString* url = [NSString stringWithUTF8String:failedUrl.c_str()];
     [p onLoadError:errorCode ErrorMsg:msg FailedUrl:url Handled:handled];
@@ -73,9 +75,9 @@ void CocoaCefClientDelegate::loadError(CefRefPtr<CefBrowser> &browser, int error
 }
 
 
-void CocoaCefClientDelegate::draggableRegionChanged(CefRefPtr<CefBrowser> &browser, const std::vector<CefDraggableRegion> &regions) { 
-  CocoaCefView* p = take(browser);
+void CocoaCefClientDelegate::draggableRegionChanged(CefRefPtr<CefBrowser> &browser, const std::vector<CefDraggableRegion> &regions) {
   @autoreleasepool {
+    CocoaCefView* p = take(browser);
     NSBezierPath* draggableRegion = [NSBezierPath bezierPath];
     NSBezierPath* nonDraggableRegion = [NSBezierPath bezierPath];
     for (auto it = regions.begin(); it != regions.end(); ++it) {
@@ -98,58 +100,57 @@ void CocoaCefClientDelegate::draggableRegionChanged(CefRefPtr<CefBrowser> &brows
 }
 
 
-void CocoaCefClientDelegate::addressChanged(CefRefPtr<CefBrowser> &browser, int frameId, const std::string &url) { 
-  CocoaCefView* p = take(browser);
+void CocoaCefClientDelegate::addressChanged(CefRefPtr<CefBrowser> &browser, int frameId, const std::string &url) {
   @autoreleasepool {
+    CocoaCefView* p = take(browser);
     NSString* u = [NSString stringWithUTF8String:url.c_str()];
     [p onAddressChanged:frameId url:u];
   }
 }
 
 
-void CocoaCefClientDelegate::titleChanged(CefRefPtr<CefBrowser> &browser, const std::string &title) { 
-  CocoaCefView* p = take(browser);
+void CocoaCefClientDelegate::titleChanged(CefRefPtr<CefBrowser> &browser, const std::string &title) {
   @autoreleasepool {
+    CocoaCefView* p = take(browser);
     NSString* t = [NSString stringWithUTF8String:title.c_str()];
     [p onTitleChanged:t];
   }
 }
 
 
-bool CocoaCefClientDelegate::tooltipMessage(CefRefPtr<CefBrowser> &browser, const std::string &text) { 
-  CocoaCefView* p = take(browser);
+bool CocoaCefClientDelegate::tooltipMessage(CefRefPtr<CefBrowser> &browser, const std::string &text) {
   return false;
 }
 
 
-void CocoaCefClientDelegate::fullscreenModeChanged(CefRefPtr<CefBrowser> &browser, bool fullscreen) { 
-  CocoaCefView* p = take(browser);
+void CocoaCefClientDelegate::fullscreenModeChanged(CefRefPtr<CefBrowser> &browser, bool fullscreen) {
   @autoreleasepool {
+    CocoaCefView* p = take(browser);
     [p onFullscreenModeChanged:fullscreen];
   }
 }
 
 
-void CocoaCefClientDelegate::statusMessage(CefRefPtr<CefBrowser> &browser, const std::string &value) { 
-  CocoaCefView* p = take(browser);
+void CocoaCefClientDelegate::statusMessage(CefRefPtr<CefBrowser> &browser, const std::string &value) {
   @autoreleasepool {
+    CocoaCefView* p = take(browser);
     NSString* msg = [NSString stringWithUTF8String:value.c_str()];
     [p onStatusMessage:msg];
   }
 }
 
 
-void CocoaCefClientDelegate::loadingProgressChanged(CefRefPtr<CefBrowser> &browser, double progress) { 
-  CocoaCefView* p = take(browser);
+void CocoaCefClientDelegate::loadingProgressChanged(CefRefPtr<CefBrowser> &browser, double progress) {
   @autoreleasepool {
+    CocoaCefView* p = take(browser);
     [p onLoadingProgressChanged:progress];
   }
 }
 
 
-void CocoaCefClientDelegate::consoleMessage(CefRefPtr<CefBrowser> &browser, const std::string &message, int level) { 
-  CocoaCefView* p = take(browser);
+void CocoaCefClientDelegate::consoleMessage(CefRefPtr<CefBrowser> &browser, const std::string &message, int level) {
   @autoreleasepool {
+    CocoaCefView* p = take(browser);
     NSString* msg = [NSString stringWithUTF8String:message.c_str()];
     [p onConsoleMessage:msg withLevel:level];
   }
@@ -161,31 +162,31 @@ bool CocoaCefClientDelegate::cursorChanged(CefRefPtr<CefBrowser> browser, void *
 }
 
 
-void CocoaCefClientDelegate::takeFocus(CefRefPtr<CefBrowser> &browser, bool next) { 
-  CocoaCefView* p = take(browser);
+void CocoaCefClientDelegate::takeFocus(CefRefPtr<CefBrowser> &browser, bool next) {
   @autoreleasepool {
+    CocoaCefView* p = take(browser);
   }
 }
 
 
 bool CocoaCefClientDelegate::setFocus(CefRefPtr<CefBrowser> &browser) {
-  CocoaCefView* p = take(browser);
   @autoreleasepool {
+    CocoaCefView* p = take(browser);
   }
   return false;
 }
 
 
-void CocoaCefClientDelegate::gotFocus(CefRefPtr<CefBrowser> &browser) { 
-  CocoaCefView* p = take(browser);
+void CocoaCefClientDelegate::gotFocus(CefRefPtr<CefBrowser> &browser) {
   @autoreleasepool {
+    CocoaCefView* p = take(browser);
   }
 }
 
 
-void CocoaCefClientDelegate::processQueryRequest(CefRefPtr<CefBrowser> &browser, int frameId, const std::string &query, const int64_t query_id) { 
-  CocoaCefView* p = take(browser);
+void CocoaCefClientDelegate::processQueryRequest(CefRefPtr<CefBrowser> &browser, int frameId, const std::string &query, const int64_t query_id) {
   @autoreleasepool {
+    CocoaCefView* p = take(browser);
     NSString* request = [NSString stringWithUTF8String:query.c_str()];
     CocoaCefQuery* q = [CocoaCefQuery queryWithRequest:request AndId:query_id];
     [p onCefQueryRequest:browser->GetIdentifier() Frame:frameId Query:q];
@@ -193,9 +194,9 @@ void CocoaCefClientDelegate::processQueryRequest(CefRefPtr<CefBrowser> &browser,
 }
 
 
-void CocoaCefClientDelegate::invokeMethodNotify(CefRefPtr<CefBrowser> &browser, int frameId, const std::string &method, const CefRefPtr<CefListValue> &arguments) { 
-  CocoaCefView* p = take(browser);
+void CocoaCefClientDelegate::invokeMethodNotify(CefRefPtr<CefBrowser> &browser, int frameId, const std::string &method, const CefRefPtr<CefListValue> &arguments) {
   @autoreleasepool {
+    CocoaCefView* p = take(browser);
     NSString *strMethod = [NSString stringWithUTF8String:method.c_str()];
 
     // extract the arguments

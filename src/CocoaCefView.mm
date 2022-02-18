@@ -78,7 +78,7 @@
   }
   
   // register view to client delegate
-  _cefContext.cefBrowserClientDelegate->insertBrowserViewMapping(pCefBrowser, self);
+  _cefContext.cefBrowserClientDelegate->insertBrowserViewMapping(pCefBrowser, (__bridge void*)(self));
   
   pCefBrowser_ = pCefBrowser;
 }
@@ -87,7 +87,7 @@
   _cefContext.cefBrowserClientDelegate->removeBrowserViewMapping(pCefBrowser_);
 }
 
-- (BOOL) isFlipped {
+- (BOOL)isFlipped {
   return TRUE;
 }
 
