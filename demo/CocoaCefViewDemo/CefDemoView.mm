@@ -95,9 +95,7 @@
 - (void)onCefQueryRequest:(int)browserId Frame:(int)frameId Query:(CocoaCefQuery*)query {
   FLog(@"");
   NSString *reqeust = query.request;
-  query.response = reqeust.uppercaseString;
-  query.error = 0;
-  query.success = true;
+  [query setResponse:reqeust.uppercaseString WithResult:true AndErrorCode:0];
   [self responseCefQuery:query];
 }
 

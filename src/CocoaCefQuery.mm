@@ -24,4 +24,10 @@
   _request = request;
 }
 
+- (void)setResponse:(NSString*)response WithResult:(bool)result AndErrorCode:(int)ec {
+  _response = response;
+  _success = result;
+  _error = ec;
+}
+
 @end
