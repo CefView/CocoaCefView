@@ -165,22 +165,20 @@ bool CocoaCefClientDelegate::cursorChanged(CefRefPtr<CefBrowser> browser, void *
 void CocoaCefClientDelegate::takeFocus(CefRefPtr<CefBrowser> &browser, bool next) {
   @autoreleasepool {
     CocoaCefView* p = take(browser);
+    if (next)
+      [p.window selectNextKeyView:p];
+    else
+      [p.window selectPreviousKeyView:p];
   }
 }
 
 
 bool CocoaCefClientDelegate::setFocus(CefRefPtr<CefBrowser> &browser) {
-  @autoreleasepool {
-    CocoaCefView* p = take(browser);
-  }
   return false;
 }
 
 
 void CocoaCefClientDelegate::gotFocus(CefRefPtr<CefBrowser> &browser) {
-  @autoreleasepool {
-    CocoaCefView* p = take(browser);
-  }
 }
 
 
