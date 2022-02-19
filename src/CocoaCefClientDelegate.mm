@@ -38,7 +38,7 @@ bool CocoaCefClientDelegate::doClose(CefRefPtr<CefBrowser> browser) {
     CocoaCefView* p = take(browser);
     [p removeFromSuperview];
   }
-  return false;
+  return true;
 }
 
 void CocoaCefClientDelegate::loadingStateChanged(CefRefPtr<CefBrowser> &browser, bool isLoading, bool canGoBack, bool canGoForward) {

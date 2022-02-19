@@ -119,6 +119,7 @@
 }
 
 #pragma mark-- Browser Control Methods
+
 - (int)browserId {
   return pCefBrowser_->GetIdentifier();
 }

@@ -14,8 +14,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// Represents the cef view of CocoaCef
 @interface CocoaCefView ()
 
-#pragma mark -- internal methods
-
 @end
 
 NS_ASSUME_NONNULL_END
