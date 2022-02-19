@@ -8,6 +8,7 @@
 
 #import "CocoaCefContext+Internal.h"
 #import "CocoaCefView+Internal.h"
+#import "CocoaCefSetting+Internal.h"
 
 #pragma region cef_headers
 #include <include/cef_app.h>
@@ -40,7 +41,15 @@
 - (instancetype)initWithFrame:(NSRect)frameRect {
   self = [super initWithFrame:frameRect];
   if (self) {
-    [self setupCocoaCefView];
+    [self setupCocoaCefView:nil];
+  }
+  return self;
+}
+
+- (instancetype)initWithFrame:(NSRect)frameRect AndSettings:(CocoaCefSetting*)settings {
+  self = [super initWithFrame:frameRect];
+  if (self) {
+    [self setupCocoaCefView:settings];
   }
   return self;
 }
@@ -48,12 +57,20 @@
 - (instancetype)initWithCoder:(NSCoder*)coder {
   self = [super initWithCoder:coder];
   if (self) {
-    [self setupCocoaCefView];
+    [self setupCocoaCefView:nil];
   }
   return self;
 }
 
-- (void)setupCocoaCefView {
+- (instancetype)initWithCoder:(NSCoder*)coder AndSettings:(CocoaCefSetting*)settings {
+  self = [super initWithCoder:coder];
+  if (self) {
+    [self setupCocoaCefView:settings];
+  }
+  return self;
+}
+
+- (void)setupCocoaCefView:(CocoaCefSetting*)settings {
   _movingWindow = FALSE;
   _draggableRegion = nullptr;
   
@@ -64,6 +81,8 @@
   window_info.SetAsChild((__bridge void*)(self), 0, 0, self.frame.size.width, self.frame.size.height);
   
   CefBrowserSettings browserSettings;
+  if (settings)
+    [settings copyToCefBrowserSettings:browserSettings];
   
   // Create the main browser window.
   auto pCefBrowser = CefBrowserHost::CreateBrowserSync(window_info,                       // window info
@@ -84,7 +103,8 @@
 }
 
 - (void)dealloc {
-  _cefContext.cefBrowserClientDelegate->removeBrowserViewMapping(pCefBrowser_);
+  if (pCefBrowser_)
+    _cefContext.cefBrowserClientDelegate->removeBrowserViewMapping(pCefBrowser_);
 }
 
 - (BOOL)isFlipped {
@@ -210,6 +230,25 @@
   if (pCefBrowser_) {
     return _cefContext.cefBrowserClient->ResponseQuery(query.rid, query.success, query.response.UTF8String, query.error);
   }
+  return false;
+}
+
+- (bool)executeJavascript:(NSString*)code InFrame:(int)frameId WithUrl:(NSString*)url StartAt:(int)lineNum {
+  if (pCefBrowser_) {
+    CefRefPtr<CefFrame> frame = pCefBrowser_->GetFrame(frameId);
+    if (frame) {
+      CefString c;
+      c.FromString(code.UTF8String);
+      
+      CefString u;
+      u.FromString(url.UTF8String);
+      
+      frame->ExecuteJavaScript(c, u, lineNum);
+      
+      return true;
+    }
+  }
+  
   return false;
 }
 

@@ -20,6 +20,16 @@ NS_ASSUME_NONNULL_BEGIN
 @interface CocoaCefView : NSView
 
 /// <#Description#>
+/// @param frameRect <#frameRect description#>
+/// @param settings <#settings description#>
+- (instancetype)initWithFrame:(NSRect)frameRect AndSettings:(CocoaCefSetting*)settings;
+
+/// <#Description#>
+/// @param coder <#coder description#>
+/// @param settings <#settings description#>
+- (instancetype)initWithCoder:(NSCoder*)coder AndSettings:(CocoaCefSetting*)settings;
+
+/// <#Description#>
 - (int)browserId;
 
 /// <#Description#>
@@ -67,6 +77,13 @@ NS_ASSUME_NONNULL_BEGIN
 /// <#Description#>
 /// @param query <#query description#>
 - (bool)responseCefQuery:(CocoaCefQuery*)query;
+
+/// <#Description#>
+/// @param code <#code description#>
+/// @param frameId <#frameId description#>
+/// @param url <#url description#>
+/// @param lineNum <#lineNum description#>
+- (bool)executeJavascript:(NSString*)code InFrame:(int)frameId WithUrl:(NSString*)url StartAt:(int)lineNum;
 
 /// <#Description#>
 /// @param isLoading <#isLoading description#>

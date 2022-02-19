@@ -27,8 +27,10 @@
 }
 
 - (instancetype)initWithFrame:(NSRect)frameRect {
+  CocoaCefSetting* settings = [[CocoaCefSetting alloc] init];
+  settings.backgroundColor = [NSColor grayColor];
   
-  self = [super initWithFrame:frameRect];
+  self = [super initWithFrame:frameRect AndSettings:settings];
   if (self) {
     [self setupCefDemoView];
   }
@@ -36,8 +38,10 @@
 }
 
 - (instancetype)initWithCoder:(NSCoder *)coder {
-
-  self = [super initWithCoder:coder];
+  CocoaCefSetting* settings = [[CocoaCefSetting alloc] init];
+  settings.backgroundColor = [NSColor grayColor];
+  
+  self = [super initWithCoder:coder AndSettings:settings];
   if (self) {
     [self setupCefDemoView];
   }

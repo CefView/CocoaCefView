@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CocoaCefSetting ()
 
-- (void)copyToCefBrowserSettings:(CefBrowserSettings&)setting;
+- (void)copyToCefBrowserSettings:(CefBrowserSettings&)settings;
 
 @end
 

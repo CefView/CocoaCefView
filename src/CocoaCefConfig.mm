@@ -34,11 +34,9 @@
     settings.persist_user_preferences = _persistUserPreferences.boolValue;
 
   if (_backgroundColor) {
-    CGFloat r;
-    CGFloat g;
-    CGFloat b;
-    CGFloat a;
-    [_backgroundColor getRed:&r green:&g blue:&b alpha:&a];
+    NSColor* c = [_backgroundColor colorUsingColorSpace:[NSColorSpace genericRGBColorSpace]];
+    CGFloat r, g, b, a = 0;
+    [c getRed:&r green:&g blue:&b alpha:&a];
     settings.background_color = CefColorSetARGB(a * 0xff, r * 0xff, g * 0xff, b * 0xff);
   }
   
