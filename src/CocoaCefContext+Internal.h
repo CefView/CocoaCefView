@@ -32,6 +32,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)uninitCefContext;
 
+- (void)exitApplication;
+
 - (void)closeAllBrowsers;
 
 - (void)scheduleCefLoopWork:(int64_t)delayMs;

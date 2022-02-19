@@ -130,17 +130,15 @@ bool g_handling_send_event = false;
 }
 
 - (void)_swizzled_replyToApplicationShouldTerminate:(BOOL)shouldTerminate {
-  if (shouldTerminate) {
-    [[CocoaCefContext sharedInstance] closeAllBrowsers];
-    [[CocoaCefContext sharedInstance] quitCefMessageLoop];
-    
-    // simulate the terminate notification
-    NSNotification* n = [NSNotification notificationWithName:NSApplicationWillTerminateNotification
-                                                      object:nil];
-    [[self delegate] applicationWillTerminate:n];
-  }
-  
   [self _swizzled_replyToApplicationShouldTerminate:NO];
+  if (shouldTerminate) {
+    // simulate the terminate notification
+    [[self delegate] applicationWillTerminate:[NSNotification notificationWithName:NSApplicationWillTerminateNotification
+                                                                            object:nil]];
+    [[CocoaCefContext sharedInstance] performSelector:@selector(exitApplication)
+                                           withObject:nil
+                                           afterDelay:0];
+  }
 }
 
 @end
@@ -308,6 +306,11 @@ static CocoaCefContext* sharedInstance_;
   CefShutdown();
   
   freeCefLibrary();
+}
+
+- (void)exitApplication {
+  [self closeAllBrowsers];
+  [self quitCefMessageLoop];
 }
 
 - (void)addLocalFolderResource:(nonnull NSString *)path forUrl:(nonnull NSString *)url withPriority:(int)priority {

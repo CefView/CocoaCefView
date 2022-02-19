@@ -44,10 +44,6 @@
   return self;
 }
 
-//- (void)dealloc {
-//  FLog(@"CefDemoView dealloced");
-//}
-
 - (void)setupCefDemoView {
   _movingWindow = FALSE;
   _firstLoadingDone = TRUE;
