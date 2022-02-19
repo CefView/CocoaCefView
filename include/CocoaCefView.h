@@ -8,11 +8,10 @@
 #ifndef CocoaCefView_h
 #define CocoaCefView_h
 
-#import <Cocoa/Cocoa.h>
 #import <Foundation/Foundation.h>
-
-#import <CocoaCefView/CocoaCefEvent.h>
+#import <Cocoa/Cocoa.h>
 #import <CocoaCefView/CocoaCefSetting.h>
+#import <CocoaCefView/CocoaCefEvent.h>
 #import <CocoaCefView/CocoaCefQuery.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -20,111 +19,135 @@ NS_ASSUME_NONNULL_BEGIN
 /// Represents the cef view of CocoaCef
 @interface CocoaCefView : NSView
 
-#pragma mark-- Browser Event Callbacks
+/// <#Description#>
+/// @param frameRect <#frameRect description#>
+/// @param settings <#settings description#>
+- (instancetype)initWithFrame:(NSRect)frameRect AndSettings:(CocoaCefSetting*)settings;
 
-/// Gets called when laoding status changed
-/// @param isLoading Indicates whether the browser is loding
-/// @param canGoBack Indicates whethter the browser can go back
-/// @param canGoForward Indicates whether the browser can go forward
-- (void)onLoadingStateChanged:(bool)isLoading CanGoBack:(bool)canGoBack CanGoForward:(bool)canGoForward;
+/// <#Description#>
+/// @param coder <#coder description#>
+/// @param settings <#settings description#>
+- (instancetype)initWithCoder:(NSCoder*)coder AndSettings:(CocoaCefSetting*)settings;
 
-/// Gets called when the loading stats
-- (void)onLoadStart;
+/// <#Description#>
+- (int)browserId;
 
-/// Gets called when the loading ends
-/// @param httpStatusCode The status code of the response
-- (void)onLoadEnd:(int)httpStatusCode;
+/// <#Description#>
+/// @param content <#content description#>
+- (void)navigateToString:(NSString*)content;
 
-/// Gets called when load failed
-/// @param errorCode The error code
-/// @param errorMsg The error message
-/// @param failedUrl The failed url
-- (bool)onLoadError:(int)errorCode ErrorMsg:(NSString *)errorMsg FailedUrl:(NSString *)failedUrl;
+/// <#Description#>
+/// @param url <#url description#>
+- (void)navigateToUrl:(NSString*)url;
 
-/// Gets called when CocoaCef url request coming
-/// @param url The requested url
-- (void)onCocoaCefUrlRequest:(NSString *)url;
-
-/// Gets called when CocoaCefQuery coming
-/// @param query The query
-- (void)onCocoaCefQueryRequest:(CocoaCefQuery *)query;
-
-/// Gets called when invoking method notification coming
-/// @param browserId The browser id
-/// @param frameId The frame id
-/// @param method The method
-/// @param arguments The argument list
-- (void)onInvokeMethodNotify:(int)browserId
-                     FrameId:(int)frameId
-                      Method:(NSString *)method
-                  Arguements:(NSArray *)arguments;
-
-/// Gets called on console message
-/// @param message The message
-- (void)onConsoleMessage:(NSString*)message level:(int)level;
-
-#pragma mark-- Browser Control Methods
-
-/// Adds a local folder as resoruce provider for specifed url prefix
-/// @param path Local file folder path
-/// @param url The url prefix
-- (void)addLocalFolderResource:(NSString *)path forUrl:(NSString *)url;
-
-
-/// Adds a archive path as resoruce provider for specifed url prefix
-/// @param path archive file folder path
-/// @param url The url prefix
-/// @param password archive password
-- (void)addArchiveResource:(NSString *)path forUrl:(NSString *)url password:(NSString *)password;
-
-/// Adds cookie for url.
-/// @param name The cookie name
-/// @param value The cookie value
-/// @param domain The cookie domain
-/// @param url The url
-- (bool)addCookie:(NSString*)name withValue:(NSString*)value ofDomain:(NSString*)domain forUrl:(NSString*)url;
-
-/// Navigates to the content
-/// @param content The content in string format
-- (void)navigateToString:(NSString *)content;
-
-/// Navigates to the url
-/// @param url The url
-- (void)navigateToUrl:(NSString *)url;
-
-/// Checks whether the browser can go back
+/// <#Description#>
 - (bool)browserCanGoBack;
 
-/// Makes the browser go back
-- (void)browserGoBack;
-
-/// Checks whether the browser can go forward
+/// <#Description#>
 - (bool)browserCanGoForward;
 
-/// Makes the browser go forward
+/// <#Description#>
+- (void)browserGoBack;
+
+/// <#Description#>
 - (void)browserGoForward;
 
-/// Checks whether the browser is loading
+/// <#Description#>
 - (bool)browserIsLoading;
 
-/// Reloads the page
+/// <#Description#>
 - (void)browserReload;
 
-/// Stops the loading
+/// <#Description#>
 - (void)browserStopLoad;
 
-/// Triggers the event to dedicated browser frame
-/// @param event The event
-/// @param frameId The frame id
-- (bool)triggerEvent:(CocoaCefEvent *)event inFrame:(int)frameId;
+/// <#Description#>
+/// @param event <#event description#>
+- (bool)triggerEvent:(CocoaCefEvent*)event;
 
-/// Broadcasts the event to all browser frames
-/// @param event The event
-- (bool)broadcastEvent:(CocoaCefEvent *)event;
+/// <#Description#>
+/// @param event <#event description#>
+/// @param frameId <#frameId description#>
+- (bool)triggerEvent:(CocoaCefEvent*)event inFrame:(int)frameId;
 
-/// Responses the CocoaCefQuery
-/// @param query The query
-- (bool)responseCefQuery:(CocoaCefQuery *)query;
+/// <#Description#>
+/// @param event <#event description#>
+- (bool)broadcastEvent:(CocoaCefEvent*)event;
+
+/// <#Description#>
+/// @param query <#query description#>
+- (bool)responseCefQuery:(CocoaCefQuery*)query;
+
+/// <#Description#>
+/// @param code <#code description#>
+/// @param frameId <#frameId description#>
+/// @param url <#url description#>
+/// @param lineNum <#lineNum description#>
+- (bool)executeJavascript:(NSString*)code InFrame:(int)frameId WithUrl:(NSString*)url StartAt:(int)lineNum;
+
+/// <#Description#>
+/// @param isLoading <#isLoading description#>
+/// @param canGoBack <#canGoBack description#>
+/// @param canGoForward <#canGoForward description#>
+- (void)onLoadingStateChanged:(bool)isLoading CanGoBack:(bool)canGoBack CanGoForward:(bool)canGoForward;
+
+/// <#Description#>
+- (void)onLoadStart;
+
+/// <#Description#>
+/// @param httpStatusCode <#httpStatusCode description#>
+- (void)onLoadEnd:(int)httpStatusCode;
+
+/// <#Description#>
+/// @param errorCode <#errorCode description#>
+/// @param errorMsg <#errorMsg description#>
+/// @param failedUrl <#failedUrl description#>
+/// @param handled <#handled description#>
+- (bool)onLoadError:(int)errorCode ErrorMsg:(NSString*)errorMsg FailedUrl:(NSString*)failedUrl Handled:(bool&)handled;
+
+/// <#Description#>
+/// @param draggableRegion <#draggableRegion description#>
+/// @param nonDraggableRegion <#nonDraggableRegion description#>
+- (void)onDraggableRegionChanged:(NSBezierPath*)draggableRegion  NonDraggableRegion:(NSBezierPath*)nonDraggableRegion;
+
+/// <#Description#>
+/// @param frameId <#frameId description#>
+/// @param url <#url description#>
+- (void)onAddressChanged:(int)frameId url:(NSString*)url;
+
+/// <#Description#>
+/// @param title <#title description#>
+- (void)onTitleChanged:(NSString*)title;
+
+/// <#Description#>
+/// @param fullscreen <#fullscreen description#>
+- (void)onFullscreenModeChanged:(bool)fullscreen;
+
+/// <#Description#>
+/// @param message <#message description#>
+- (void)onStatusMessage:(NSString*)message;
+
+/// <#Description#>
+/// @param message <#message description#>
+/// @param level <#level description#>
+- (void)onConsoleMessage:(NSString*)message withLevel:(int)level;
+
+/// <#Description#>
+/// @param progress <#progress description#>
+- (void)onLoadingProgressChanged:(double)progress;
+
+/// <#Description#>
+/// @param browserId <#browserId description#>
+/// @param frameId <#frameId description#>
+/// @param query <#query description#>
+- (void)onCefQueryRequest:(int)browserId Frame:(int)frameId Query:(CocoaCefQuery*)query;
+
+/// <#Description#>
+/// @param browserId <#browserId description#>
+/// @param frameId <#frameId description#>
+/// @param method <#method description#>
+/// @param arguments <#arguments description#>
+- (void)onInvokeMethod:(int)browserId Frame:(int)frameId Method:(NSString*)method Arguments:(NSArray*)arguments;
 
 @end
 

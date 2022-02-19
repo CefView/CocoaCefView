@@ -22,13 +22,19 @@ NS_ASSUME_NONNULL_BEGIN
 @property(copy, readonly) NSString *request;
 
 /// The response content
-@property(copy) NSString *response;
+@property(copy, readonly) NSString *response;
 
 /// Indicates whether the repsonse succeeds or not
-@property bool success;
+@property(readonly) bool success;
 
 /// The response error code
-@property int error;
+@property(readonly) int error;
+
+/// <#Description#>
+/// @param response <#response description#>
+/// @param result <#result description#>
+/// @param ec <#ec description#>
+- (void)setResponse:(NSString*)response WithResult:(bool)result AndErrorCode:(int)ec;
 
 @end
 

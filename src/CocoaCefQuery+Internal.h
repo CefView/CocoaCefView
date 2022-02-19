@@ -5,17 +5,13 @@
 //  Created by Sheen Tian on 2020/6/18.
 //
 
-#import <CocoaCefView/CocoaCef.h>
+#import <CocoaCefView/CocoaCefQuery.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface CocoaCefQuery ()
 
-/// The query id
-@property(readwrite) int64_t rid;
-
-/// The request content
-@property(copy, readwrite) NSString *request;
++ (id)queryWithRequest:(NSString*)request AndId:(int64_t)rid;
 
 @end
 

@@ -27,8 +27,10 @@
 }
 
 - (instancetype)initWithFrame:(NSRect)frameRect {
+  CocoaCefSetting* settings = [[CocoaCefSetting alloc] init];
+  settings.backgroundColor = [NSColor grayColor];
   
-  self = [super initWithFrame:frameRect];
+  self = [super initWithFrame:frameRect AndSettings:settings];
   if (self) {
     [self setupCefDemoView];
   }
@@ -36,8 +38,10 @@
 }
 
 - (instancetype)initWithCoder:(NSCoder *)coder {
-
-  self = [super initWithCoder:coder];
+  CocoaCefSetting* settings = [[CocoaCefSetting alloc] init];
+  settings.backgroundColor = [NSColor grayColor];
+  
+  self = [super initWithCoder:coder AndSettings:settings];
   if (self) {
     [self setupCefDemoView];
   }
@@ -50,7 +54,7 @@
   
   NSString *webroot = [[[NSBundle mainBundle] resourcePath]
       stringByAppendingPathComponent:@FEAPP_FOLDER];
-  [self addLocalFolderResource:webroot forUrl:@FEAPP_BASE_URL];
+  [[CocoaCefContext sharedInstance] addLocalFolderResource:webroot forUrl:@FEAPP_BASE_URL withPriority:0];
 
   NSURL *indexUrl =
       [NSURL URLWithString:@FEAPP_INDEX
@@ -61,9 +65,8 @@
 
 - (void)changeBackgroundColor {
   CocoaCefEvent *event = [CocoaCefEvent initWithName:@"colorChange"];
-  [event setStringValue:[NSString stringWithFormat:@"#%06X",
-                                                   (arc4random() % 0xFFFFFF)]
-                 forKey:@"color"];
+  [event.arguments addObject:[NSString stringWithFormat:@"#%06X",
+                                                   (arc4random() % 0xFFFFFF)]];
   [self broadcastEvent:event];
 }
 
@@ -93,23 +96,14 @@
   return false;
 }
 
-- (void)onCocoaCefUrlRequest:(NSString *)url {
-  FLog(@"");
-}
-
-- (void)onCocoaCefQueryRequest:(CocoaCefQuery *)query {
+- (void)onCefQueryRequest:(int)browserId Frame:(int)frameId Query:(CocoaCefQuery*)query {
   FLog(@"");
   NSString *reqeust = query.request;
-  query.response = reqeust.uppercaseString;
-  query.error = 0;
-  query.success = true;
+  [query setResponse:reqeust.uppercaseString WithResult:true AndErrorCode:0];
   [self responseCefQuery:query];
 }
 
-- (void)onInvokeMethodNotify:(int)browserId
-                     FrameId:(int)frameId
-                      Method:(NSString *)method
-                  Arguements:(NSArray *)arguments {
+- (void)onInvokeMethod:(int)browserId Frame:(int)frameId Method:(NSString*)method Arguments:(NSArray*)arguments {
   FLog(@"");
   if ([method isEqual:@"TestMethod"]) {
     NSAlert *alert = [[NSAlert alloc] init];
@@ -127,7 +121,7 @@
   }
 }
 
-- (void)onConsoleMessage:(NSString*)message level:(int)level {
+- (void)onConsoleMessage:(NSString*)message withLevel:(int)level {
   NSLog(@"web log: %d, %@", level, message);
 }
 

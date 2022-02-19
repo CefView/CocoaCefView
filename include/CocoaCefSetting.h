@@ -9,39 +9,108 @@
 #define CocoaCefSetting_h
 
 #import <Foundation/Foundation.h>
+#import <Cocoa/Cocoa.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// <#Description#>
 @interface CocoaCefSetting : NSObject
 
-/// The debug port. 0 disables remote debug.
-@property uint16_t debugPort;
+// string
+/// <#Description#>
+@property NSString* standardFontFamily;
 
-/// 0xAARRGGBB
-@property uint32_t backgroundColor;
+/// <#Description#>
+@property NSString* fixedFontFamily;
 
-/// The cache root path.
-@property (copy) NSString* cacheRootPath;
+/// <#Description#>
+@property NSString* serifFontFamily;
 
-/// The cache path.
-@property (copy) NSString* cachePath;
+/// <#Description#>
+@property NSString* sansSerifFontFamily;
 
-/// The bridge object name.
-@property (copy) NSString* bridgeObjectName;
+/// <#Description#>
+@property NSString* cursiveFontFamily;
 
-/// Gets the default instance.
-+ (nonnull CocoaCefSetting*)defaultInstance;
+/// <#Description#>
+@property NSString* fantasyFontFamily;
 
-/// Adds cross origin allow list entry.
-/// @param sourceOrigin The source origin
-/// @param targetProtocol The target protocol
-/// @param targetDomain The target domain
-/// @param allowSubdomains Indicates whether to allow the sub domain or not
-+ (bool)addCrossOriginAllowlistEntry:(NSString*)sourceOrigin TargetProtocol:(NSString*)targetProtocol TargetDomain:(NSString*)targetDomain AllowSubDomain:(bool)allowSubdomains;
+/// <#Description#>
+@property NSString* defaultEncoding;
 
-@end
+/// <#Description#>
+@property NSString* acceptLanguageList;
 
-@interface CocoaCefBrowserSetting : NSObject
+// int
+/// <#Description#>
+@property NSNumber* windowlessFrameRate;
+
+/// <#Description#>
+@property NSNumber* defaultFontSize;
+
+/// <#Description#>
+@property NSNumber* defaultFixedFontSize;
+
+/// <#Description#>
+@property NSNumber* minimumFontSize;
+
+/// <#Description#>
+@property NSNumber* minimumLogicalFontSize;
+
+// optional boolean
+/// <#Description#>
+@property NSNumber* remoteFonts;
+
+/// <#Description#>
+@property NSNumber* javascript;
+
+/// <#Description#>
+@property NSNumber* javascriptCloseWindows;
+
+/// <#Description#>
+@property NSNumber* javascriptAccessClipboard;
+
+/// <#Description#>
+@property NSNumber* javascriptDomPaste;
+
+/// <#Description#>
+@property NSNumber* plugins;
+
+/// <#Description#>
+@property NSNumber* universalAccessFromFileUrls;
+
+/// <#Description#>
+@property NSNumber* fileAccessFromFileUrls;
+
+/// <#Description#>
+@property NSNumber* webSecurity;
+
+/// <#Description#>
+@property NSNumber* imageLoading;
+
+/// <#Description#>
+@property NSNumber* imageShrinkStandaloneToFit;
+
+/// <#Description#>
+@property NSNumber* textAreaResize;
+
+/// <#Description#>
+@property NSNumber* tabToLinks;
+
+/// <#Description#>
+@property NSNumber* localStorage;
+
+/// <#Description#>
+@property NSNumber* databases;
+
+/// <#Description#>
+@property NSNumber* applicationCache;
+
+/// <#Description#>
+@property NSNumber* webgl;
+
+/// <#Description#>
+@property NSColor* backgroundColor;
 
 @end
 
