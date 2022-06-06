@@ -4,3 +4,4 @@ output
 build
 .build.mac
 /cmake-build-debug/
+.build

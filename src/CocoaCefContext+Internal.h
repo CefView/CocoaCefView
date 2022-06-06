@@ -8,6 +8,8 @@
 #import <CocoaCefView/CocoaCefContext.h>
 
 #include <memory>
+#include <string>
+#include <list>
 
 #include <include/cef_app.h>
 
@@ -18,13 +20,34 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface CocoaCefContext ()
+typedef struct ResourceMapping
+{
+  ResourceMapping(const std::string& p, const std::string& u, const std::string& pwd, int pri)
+    : path(p)
+    , url(u)
+    , password(pwd)
+    , priority(pri)
+  {
+  }
 
-@property CefRefPtr<CefViewBrowserClient> cefBrowserClient;
+  std::string path;
+  std::string url;
+  std::string password;
+  int priority;
+} ResourceMapping;
 
-@property std::shared_ptr<CocoaCefClientDelegate> cefBrowserClientDelegate;
+typedef std::list<ResourceMapping> ResourceMappingList;
+
+@interface
+CocoaCefContext ()
 
 - (bool)initCefContext:(CocoaCefConfig*)config;
+
+- (const ResourceMappingList&)getFolderResourceMappingList;
+
+- (const ResourceMappingList&)getArchiveResourceMappingList;
+
+- (CefRefPtr<CefViewBrowserApp>)getCefApp;
 
 - (void)runCefMessageLoop;
 

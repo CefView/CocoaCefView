@@ -20,29 +20,27 @@ source_group(
 set(CocoaCefView_INFO_PLIST_FILE 
   "${CMAKE_CURRENT_LIST_DIR}/Info.plist")
 
-add_library(CocoaCefView SHARED
+add_library(CocoaCefView ${COCOACEFVIEW_LIB_TYPE}
   ${CocoaCefView_INCLUDE_HEADERS}
   ${CocoaCefView_SRC_FILES}
   ${CocoaCefView_INFO_PLIST_FILE}
 )
 
-set_property(TARGET CocoaCefView 
-  APPEND_STRING PROPERTY COMPILE_FLAGS "-fobjc-arc"
-)
-
 set_target_properties(CocoaCefView
   PROPERTIES
     FRAMEWORK TRUE
+
+    CLANG_ENABLE_OBJC_ARC                                       "YES"
+    COMPILE_FLAGS                                               "-fobjc-arc"
+
     PUBLIC_HEADER                                               "${CocoaCefView_INCLUDE_HEADERS}"
     MACOSX_FRAMEWORK_INFO_PLIST                                 "${CocoaCefView_INFO_PLIST_FILE}"
-    MACOSX_FRAMEWORK_IDENTIFIER                                 "com.cocoacef.cocoacefview"
-    CLANG_ENABLE_OBJC_ARC                                       "YES"
+    XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER                   "com.cefview.cocoacefview"
     XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD                 "gnu++11"   # -std=gnu++11
     XCODE_ATTRIBUTE_CLANG_LINK_OBJC_RUNTIME                     "NO"        # -fno-objc-link-runtime
     XCODE_ATTRIBUTE_COPY_PHASE_STRIP                            "NO"
     XCODE_ATTRIBUTE_DEAD_CODE_STRIPPING[variant=Release]        "YES"       # -Wl,-dead_strip
     XCODE_ATTRIBUTE_GCC_C_LANGUAGE_STANDARD                     "c99"       # -std=c99
-    XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER                   "com.cefview.cocoacefview"
 )
 
 target_include_directories(CocoaCefView PRIVATE
@@ -61,18 +59,19 @@ target_link_libraries(CocoaCefView
 
 add_custom_command(TARGET CocoaCefView
   PRE_BUILD
+
+    # create plugins directory
+    COMMAND mkdir -p
+      "$<TARGET_BUNDLE_DIR:CocoaCefView>/PlugIns/"
+
+    #copy the CefViewCore binaries to resource directory
+    COMMAND cp -a
+      "$<TARGET_BUNDLE_DIR:CefViewWing>/../"
+      "$<TARGET_BUNDLE_DIR:CocoaCefView>/PlugIns/"
+
     #sign the cef framework
-    COMMAND 
-    codesign --force --sign - "$<TARGET_BUNDLE_DIR:CocoaCefView>/../Chromium Embedded Framework.framework"
-
-    #copy the cef framework to resource directory
-    COMMAND 
-    ${CMAKE_COMMAND} -E copy_directory 
-    "$<TARGET_BUNDLE_DIR:CocoaCefView>/../Chromium Embedded Framework.framework"
-    "$<TARGET_FILE_DIR:CocoaCefView>/Resources/Chromium Embedded Framework.framework"
-
-    #copy the CefViewWing to resource directory
-    COMMAND cp -a 
-    \"$<TARGET_BUNDLE_DIR:CocoaCefView>/../CefViewWing\"*.app 
-    "$<TARGET_FILE_DIR:CocoaCefView>/Resources/"
+    COMMAND codesign
+      --force
+      --sign - 
+      "$<TARGET_BUNDLE_DIR:CocoaCefView>/PlugIns/Chromium Embedded Framework.framework"
 )

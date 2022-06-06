@@ -16,19 +16,19 @@ NS_ASSUME_NONNULL_BEGIN
 @interface CocoaCefQuery : NSObject
 
 /// The query id
-@property(readonly) int64_t rid;
+@property (readonly) int64_t rid;
 
 /// The request content
-@property(copy, readonly) NSString *request;
+@property (copy, readonly) NSString* request;
 
 /// The response content
-@property(copy, readonly) NSString *response;
+@property (copy, readonly) NSString* response;
 
 /// Indicates whether the repsonse succeeds or not
-@property(readonly) bool success;
+@property (readonly) bool success;
 
 /// The response error code
-@property(readonly) int error;
+@property (readonly) int error;
 
 /// <#Description#>
 /// @param response <#response description#>

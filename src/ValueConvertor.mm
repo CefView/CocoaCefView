@@ -2,13 +2,14 @@
 
 @implementation ValueConvertor
 
-+ (CefRefPtr<CefValue>)CefValueFromNSValue:(NSObject*)oValue {
++ (CefRefPtr<CefValue>)CefValueFromNSValue:(const NSObject*)oValue
+{
   auto cVal = CefValue::Create();
-  
+
   if (!oValue) {
     return cVal;
   }
-  
+
   if ([oValue isKindOfClass:NSNull.class]) {
     cVal->SetNull();
   } else if ([oValue isKindOfClass:NSNumber.class]) {
@@ -46,15 +47,16 @@
   } else {
     cVal->SetNull();
   }
-  
+
   return cVal;
 }
 
-+ (NSObject*)NSValueFromCefValue:(CefRefPtr<CefValue>&)cValue {
++ (NSObject*)NSValueFromCefValue:(const CefRefPtr<CefValue>&)cValue
+{
   if (!cValue) {
     return;
   }
-  
+
   auto type = cValue->GetType();
   switch (type) {
     case CefValueType::VTYPE_INVALID:
@@ -76,24 +78,26 @@
     case CefValueType::VTYPE_BINARY: {
       auto cData = cValue->GetBinary();
       auto cLen = cData->GetSize();
-      return [NSData dataWithBytes:cData length:cLen];
+      NSMutableData* data = [NSMutableData dataWithLength:cLen];
+      cData->GetData(data.mutableBytes, cLen, 0);
+      return data;
     } break;
     case CefValueType::VTYPE_DICTIONARY: {
       NSMutableDictionary* oDic = [[NSMutableDictionary alloc] init];
       auto cDict = cValue->GetDictionary();
-      
+
       CefDictionaryValue::KeyList cKeys;
       if (!cDict->GetKeys(cKeys)) {
         return oDic;
       }
-      
+
       for (auto& key : cKeys) {
         auto cVal = cDict->GetValue(key);
         NSString* oKey = [NSString stringWithUTF8String:key.ToString().c_str()];
         auto oVal = [self NSValueFromCefValue:cVal];
         [oDic setObject:oVal forKey:oKey];
       }
-      
+
       return oDic;
     } break;
     case CefValueType::VTYPE_LIST: {
@@ -106,7 +110,7 @@
         auto oVal = [self NSValueFromCefValue:cVal];
         [oList addObject:oVal];
       }
-      
+
       return oList;
     } break;
     default:
