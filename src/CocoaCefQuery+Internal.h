@@ -9,7 +9,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface CocoaCefQuery ()
+@interface
+CocoaCefQuery ()
 
 + (id)queryWithRequest:(NSString*)request AndId:(int64_t)rid;
 

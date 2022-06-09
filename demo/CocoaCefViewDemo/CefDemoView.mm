@@ -6,30 +6,24 @@
 //
 
 #import "CefDemoView.h"
+#import "webres.h"
 
 #if (defined(DEBUG) || defined(_DEBUG) || !defined(DNDEBUG))
-#define FLog(message, ...)                                                     \
-  NSLog((@"%s [Line %d] " message), __PRETTY_FUNCTION__, __LINE__,             \
-        ##__VA_ARGS__)
+#define FLog(message, ...) NSLog((@"%s [Line %d] " message), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__)
 #else
 #define FLog(message, ...)
 #endif
-
-#define FEAPP_SCHEME "http://"
-#define FEAPP_FOLDER "webres"
-#define FEAPP_HOST "feapp"
-#define FEAPP_INDEX "/index.html"
-#define FEAPP_BASE_URL FEAPP_SCHEME FEAPP_HOST
 
 @implementation CefDemoView {
   BOOL _movingWindow;
   BOOL _firstLoadingDone;
 }
 
-- (instancetype)initWithFrame:(NSRect)frameRect {
+- (instancetype)initWithFrame:(NSRect)frameRect
+{
   CocoaCefSetting* settings = [[CocoaCefSetting alloc] init];
   settings.backgroundColor = [NSColor grayColor];
-  
+
   self = [super initWithFrame:frameRect AndSettings:settings];
   if (self) {
     [self setupCefDemoView];
@@ -37,10 +31,11 @@
   return self;
 }
 
-- (instancetype)initWithCoder:(NSCoder *)coder {
+- (instancetype)initWithCoder:(NSCoder*)coder
+{
   CocoaCefSetting* settings = [[CocoaCefSetting alloc] init];
   settings.backgroundColor = [NSColor grayColor];
-  
+
   self = [super initWithCoder:coder AndSettings:settings];
   if (self) {
     [self setupCefDemoView];
@@ -48,72 +43,69 @@
   return self;
 }
 
-- (void)setupCefDemoView {
+- (void)setupCefDemoView
+{
   _movingWindow = FALSE;
   _firstLoadingDone = TRUE;
-  
-  NSString *webroot = [[[NSBundle mainBundle] resourcePath]
-      stringByAppendingPathComponent:@FEAPP_FOLDER];
-  [[CocoaCefContext sharedInstance] addLocalFolderResource:webroot forUrl:@FEAPP_BASE_URL withPriority:0];
 
-  NSURL *indexUrl =
-      [NSURL URLWithString:@FEAPP_INDEX
-             relativeToURL:[NSURL URLWithString:@FEAPP_BASE_URL]];
-  
+  NSURL* indexUrl = [NSURL URLWithString:@FEAPP_INDEX relativeToURL:[NSURL URLWithString:@FEAPP_BASE_URL]];
+
   [self navigateToUrl:indexUrl.absoluteString];
 }
 
-- (void)changeBackgroundColor {
-  CocoaCefEvent *event = [CocoaCefEvent initWithName:@"colorChange"];
-  [event.arguments addObject:[NSString stringWithFormat:@"#%06X",
-                                                   (arc4random() % 0xFFFFFF)]];
+- (void)changeBackgroundColor
+{
+  CocoaCefEvent* event = [CocoaCefEvent initWithName:@"colorChange"];
+  [event.arguments addObject:[NSString stringWithFormat:@"#%06X", (arc4random() % 0xFFFFFF)]];
   [self broadcastEvent:event];
 }
 
-- (void)onLoadingStateChanged:(bool)isLoading
-                    CanGoBack:(bool)canGoBack
-                 CanGoForward:(bool)canGoForward {
+- (void)onLoadingStateChanged:(bool)isLoading CanGoBack:(bool)canGoBack CanGoForward:(bool)canGoForward
+{
   if (_firstLoadingDone && !isLoading) {
     // loading complete
-      _firstLoadingDone = FALSE;
+    _firstLoadingDone = FALSE;
     [self.window setIsVisible:YES];
   }
   FLog(@"%hd", isLoading);
 }
 
-- (void)onLoadStart {
+- (void)onLoadStart
+{
   FLog(@"");
 }
 
-- (void)onLoadEnd:(int)httpStatusCode {
+- (void)onLoadEnd:(int)httpStatusCode
+{
   FLog(@"");
 }
 
-- (bool)onLoadError:(int)errorCode
-           ErrorMsg:(NSString *)errorMsg
-          FailedUrl:(NSString *)failedUrl {
+- (bool)onLoadError:(int)errorCode ErrorMsg:(NSString*)errorMsg FailedUrl:(NSString*)failedUrl
+{
   FLog(@"");
   return false;
 }
 
-- (void)onCefQueryRequest:(int)browserId Frame:(int)frameId Query:(CocoaCefQuery*)query {
+- (void)onCefQueryRequest:(int)browserId Frame:(long long)frameId Query:(CocoaCefQuery*)query
+{
   FLog(@"");
-  NSString *reqeust = query.request;
+  NSString* reqeust = query.request;
   [query setResponse:reqeust.uppercaseString WithResult:true AndErrorCode:0];
   [self responseCefQuery:query];
 }
 
-- (void)onInvokeMethod:(int)browserId Frame:(int)frameId Method:(NSString*)method Arguments:(NSArray*)arguments {
+- (void)onInvokeMethod:(int)browserId Frame:(long long)frameId Method:(NSString*)method Arguments:(NSArray*)arguments
+{
   FLog(@"");
   if ([method isEqual:@"TestMethod"]) {
-    NSAlert *alert = [[NSAlert alloc] init];
+    NSAlert* alert = [[NSAlert alloc] init];
     [alert setMessageText:@"native method invoked from javascript"];
 
-    NSMutableString *msg = [[NSMutableString alloc] init];
+    NSMutableString* msg = [[NSMutableString alloc] init];
     for (int i = 0; i < arguments.count; i++) {
-      NSObject *arg = [arguments objectAtIndex:i];
-      [msg
-          appendFormat:@"args[%d]: type:%@, value:%@\n", i, arg.className, arg];
+      NSObject* arg = [arguments objectAtIndex:i];
+
+      [msg appendFormat:@"args[%d]: type:%@, value:%@\n", i, arg.className, arg];
     }
     [alert setInformativeText:msg];
 
@@ -121,7 +113,8 @@
   }
 }
 
-- (void)onConsoleMessage:(NSString*)message withLevel:(int)level {
+- (void)onConsoleMessage:(NSString*)message withLevel:(int)level
+{
   NSLog(@"web log: %d, %@", level, message);
 }
 

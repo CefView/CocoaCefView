@@ -16,14 +16,14 @@ NS_ASSUME_NONNULL_BEGIN
 @interface CocoaCefEvent : NSObject
 
 /// The event name
-@property(copy) NSString *name;
+@property (copy) NSString* name;
 
 // The argument list
-@property(strong) NSMutableArray* arguments;
+@property (strong) NSMutableArray* arguments;
 
 /// Initializes a event instance with the specifed name
 /// @param name The name
-+ (instancetype)initWithName:(NSString *)name;
++ (instancetype)initWithName:(NSString*)name;
 
 @end
 

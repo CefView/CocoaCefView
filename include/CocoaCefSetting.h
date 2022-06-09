@@ -77,15 +77,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property NSNumber* plugins;
 
 /// <#Description#>
-@property NSNumber* universalAccessFromFileUrls;
-
-/// <#Description#>
-@property NSNumber* fileAccessFromFileUrls;
-
-/// <#Description#>
-@property NSNumber* webSecurity;
-
-/// <#Description#>
 @property NSNumber* imageLoading;
 
 /// <#Description#>
@@ -102,9 +93,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// <#Description#>
 @property NSNumber* databases;
-
-/// <#Description#>
-@property NSNumber* applicationCache;
 
 /// <#Description#>
 @property NSNumber* webgl;

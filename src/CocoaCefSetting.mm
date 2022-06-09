@@ -16,7 +16,8 @@
 
 @implementation CocoaCefSetting
 
-- (void)copyToCefBrowserSettings:(CefBrowserSettings&)settings {
+- (void)copyToCefBrowserSettings:(CefBrowserSettings&)settings
+{
   if (_standardFontFamily.length)
     CefString(&settings.standard_font_family) = _standardFontFamily.UTF8String;
 
@@ -74,15 +75,6 @@
   if (_plugins)
     settings.plugins = _plugins.boolValue ? STATE_ENABLED : STATE_DISABLED;
 
-  if (_universalAccessFromFileUrls)
-    settings.universal_access_from_file_urls = _universalAccessFromFileUrls.boolValue ? STATE_ENABLED : STATE_DISABLED;
-
-  if (_fileAccessFromFileUrls)
-    settings.file_access_from_file_urls = _fileAccessFromFileUrls.boolValue ? STATE_ENABLED : STATE_DISABLED;
-
-  if (_webSecurity)
-    settings.web_security = _webSecurity.boolValue ? STATE_ENABLED : STATE_DISABLED;
-
   if (_imageLoading)
     settings.image_loading = _imageLoading.boolValue ? STATE_ENABLED : STATE_DISABLED;
 
@@ -100,9 +92,6 @@
 
   if (_databases)
     settings.databases = _databases.boolValue ? STATE_ENABLED : STATE_DISABLED;
-
-  if (_applicationCache)
-    settings.application_cache = _applicationCache.boolValue ? STATE_ENABLED : STATE_DISABLED;
 
   if (_webgl)
     settings.webgl = _webgl.boolValue ? STATE_ENABLED : STATE_DISABLED;

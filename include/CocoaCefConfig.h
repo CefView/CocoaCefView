@@ -13,20 +13,49 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// <summary>
+/// Represents the log severity
+/// </summary>
+typedef NS_ENUM(NSUInteger, LogLevel) {
+  /// Default logging (currently INFO logging)
+  kLogSeverityDefault,
+
+  /// Verbose logging
+  kLogSeverityVerbose,
+
+  /// DEBUG logging
+  kLogSeverityDebug,
+
+  /// INFO logging
+  kLogSeverityInfo,
+
+  /// WARNING logging
+  kLogSeverityWarnning,
+
+  /// ERROR logging
+  kLogSeverityError,
+
+  /// FATAL logging
+  kLogSeverityFatal,
+
+  /// Disable logging to file for all messages, and to stderr for messages with severity less than FATAL
+  kLogSeverityDisable = 99
+};
+
 /// <#Description#>
 @interface CocoaCefConfig : NSObject
 
 /// <#Description#>
-@property NSNumber* logLevel;
+@property NSUInteger logLevel;
 
 /// short
-@property NSNumber* remoteDebuggingport;
+@property NSUInteger remoteDebuggingPort;
 
 /// boolean
-@property NSNumber* persistSessionCookies;
+@property BOOL persistSessionCookies;
 
 /// boolean
-@property NSNumber* persistUserPreferences;
+@property BOOL persistUserPreferences;
 
 /// <#Description#>
 @property NSString* locale;
@@ -48,6 +77,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// <#Description#>
 @property NSColor* backgroundColor;
+
+/// <#Description#>
+/// @param smitch <#smitch description#>
+- (void)addCommandLineSwitch:(NSString*)smitch;
+
+/// <#Description#>
+/// @param smitch <#smitch description#>
+/// @param value <#value description#>
+- (void)addCommandLineSwitch:(NSString*)smitch WithValue:(NSString*)value;
 
 @end
 

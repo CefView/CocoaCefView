@@ -8,8 +8,8 @@
 
 @interface ValueConvertor : NSObject
 
-+ (CefRefPtr<CefValue>)CefValueFromNSValue:(NSObject*)oValue;
++ (CefRefPtr<CefValue>)CefValueFromNSValue:(const NSObject*)oValue;
 
-+ (NSObject*)NSValueFromCefValue:(CefRefPtr<CefValue>&)cValue;
++ (NSObject*)NSValueFromCefValue:(const CefRefPtr<CefValue>&)cValue;
 
 @end
