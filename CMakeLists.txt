@@ -15,14 +15,26 @@ if (NOT CMAKE_BUILD_TYPE)
 endif()
 
 # Set proejct architecture
+set(OS_MACOS 1)
+set(OS_POSIX 1)
+add_definitions(-DOS_MACOS=1 -DOS_POSIX=1)
+
+
 if(NOT DEFINED PROJECT_ARCH)
-  if(OS_WINDOWS AND "${CMAKE_GENERATOR_PLATFORM}" STREQUAL "arm64")
-    set(PROJECT_ARCH "arm64")
-  elseif(CMAKE_SIZEOF_VOID_P MATCHES 8)
+  if(CMAKE_SIZEOF_VOID_P MATCHES 8)
     set(PROJECT_ARCH "x86_64")
   else()
     set(PROJECT_ARCH "x86")
   endif()
+endif()
+
+# Target architecture.
+if(PROJECT_ARCH STREQUAL "x86_64")
+  set(CMAKE_OSX_ARCHITECTURES "x86_64")
+elseif(PROJECT_ARCH STREQUAL "arm64")
+  set(CMAKE_OSX_ARCHITECTURES "arm64")
+else()
+  set(CMAKE_OSX_ARCHITECTURES "i386")
 endif()
 
 # Use folders in the resulting project files.

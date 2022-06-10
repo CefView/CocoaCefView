@@ -52,6 +52,8 @@ set_target_properties(${PROJECT_NAME}
     XCODE_ATTRIBUTE_LD_RUNPATH_SEARCH_PATHS   "@executable_path/../Frameworks"
     XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "com.cefview.cocoacefviewdemo"
     XCODE_ATTRIBUTE_FRAMEWORK_SEARCH_PATHS    "${CMAKE_BINARY_DIR}/output/$<CONFIG>/bin"
+    OSX_ARCHITECTURES_DEBUG                   "${CMAKE_OSX_ARCHITECTURES}"
+    OSX_ARCHITECTURES_RELEASE                 "${CMAKE_OSX_ARCHITECTURES}"
 
     # # the below two properties need CMake >= 3.20.0, we just copy the framework by post build command
     # XCODE_EMBED_FRAMEWORKS_CODE_SIGN_ON_COPY   "YES"
