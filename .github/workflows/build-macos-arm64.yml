@@ -52,8 +52,8 @@ jobs:
       - name: Build CocoaCefView
         run: xcodebuild -project ${{github.workspace}}/build/CocoaCefView.xcodeproj -target CocoaCefView -configuration ${{env.BUILD_TYPE}}
 
-      - name: Build CocoaCefViewTest
-        run: xcodebuild -project ${{github.workspace}}/build/CocoaCefView.xcodeproj -target CocoaCefViewTest -configuration ${{env.BUILD_TYPE}}
+      - name: Build CocoaCefViewDemo
+        run: xcodebuild -project ${{github.workspace}}/build/CocoaCefView.xcodeproj -target CocoaCefViewDemo -configuration ${{env.BUILD_TYPE}}
 
       - name: Install
         if: github.event_name != 'pull_request'
