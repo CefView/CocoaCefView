@@ -31,14 +31,6 @@ set_property(TARGET ${PROJECT_NAME}
   APPEND_STRING PROPERTY COMPILE_FLAGS "-fobjc-arc"
 )
 
-add_library(CocoaCefViewFramework ${COCOACEFVIEW_LIB_TYPE} IMPORTED)
-set_target_properties(CocoaCefViewFramework
-  PROPERTIES
-    FRAMEWORK                 TRUE
-    IMPORTED_LOCATION         "${CMAKE_BINARY_DIR}/output/Release/bin/CocoaCefView.framework"
-    IMPORTED_LOCATION_DEBUG   "${CMAKE_BINARY_DIR}/output/Debug/bin/CocoaCefView.framework"
-    IMPORTED_LOCATION_RELEASE "${CMAKE_BINARY_DIR}/output/Release/bin/CocoaCefView.framework"
-)
 
 set_target_properties(${PROJECT_NAME} 
   PROPERTIES
@@ -66,7 +58,7 @@ target_link_libraries(${PROJECT_NAME}
   PRIVATE
     ${COCOA_FRAMEWORK}
     ${APPKIT_FRAMEWORK}
-    CocoaCefViewFramework
+    CocoaCefView
 )
 
 add_custom_command(TARGET ${PROJECT_NAME} 
@@ -76,7 +68,7 @@ add_custom_command(TARGET ${PROJECT_NAME}
     COMMAND rm -fr 
       "$<TARGET_BUNDLE_CONTENT_DIR:${PROJECT_NAME}>/Frameworks/CocoaCefView.framework"
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-      "$<TARGET_FILE:CocoaCefViewFramework>"
+      "$<TARGET_BUNDLE_DIR:CocoaCefView>"
       "$<TARGET_BUNDLE_CONTENT_DIR:${PROJECT_NAME}>/Frameworks/CocoaCefView.framework"
     
     # copy the web resource to the bundle

@@ -64,16 +64,16 @@ add_custom_command(TARGET CocoaCefView
 
     # create plugins directory
     COMMAND mkdir -p
-      "$<TARGET_BUNDLE_DIR:CocoaCefView>/PlugIns/"
+      "$<TARGET_BUNDLE_DIR:CocoaCefView>/Resources/PlugIns/"
 
     #copy the CefViewCore binaries to resource directory
     COMMAND cp -a
       "$<TARGET_BUNDLE_DIR:CefViewWing>/../"
-      "$<TARGET_BUNDLE_DIR:CocoaCefView>/PlugIns/"
+      "$<TARGET_BUNDLE_DIR:CocoaCefView>/Resources/PlugIns/"
 
     #sign the cef framework
     COMMAND codesign
       --force
       --sign - 
-      "$<TARGET_BUNDLE_DIR:CocoaCefView>/PlugIns/Chromium Embedded Framework.framework"
+      "$<TARGET_BUNDLE_DIR:CocoaCefView>/Resources/PlugIns/Chromium Embedded Framework.framework"
 )
