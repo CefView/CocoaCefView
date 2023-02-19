@@ -72,9 +72,11 @@
   if (_javascriptDomPaste)
     settings.javascript_dom_paste = _javascriptDomPaste.boolValue ? STATE_ENABLED : STATE_DISABLED;
 
+#if CEF_VERSION_MAJOR < 100
   if (_plugins)
     settings.plugins = _plugins.boolValue ? STATE_ENABLED : STATE_DISABLED;
-
+#endif
+  
   if (_imageLoading)
     settings.image_loading = _imageLoading.boolValue ? STATE_ENABLED : STATE_DISABLED;
 

@@ -79,6 +79,9 @@ typedef NS_ENUM(NSUInteger, LogLevel) {
 @property NSColor* backgroundColor;
 
 /// <#Description#>
+@property BOOL windowlessRenderingEnabled;
+
+/// <#Description#>
 /// @param smitch <#smitch description#>
 - (void)addCommandLineSwitch:(NSString*)smitch;
 

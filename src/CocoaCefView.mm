@@ -4,6 +4,7 @@
 //
 //  Created by Sheen Tian on 2020/6/10.
 //
+#import <CocoaCefView/CocoaCefView_global.h>
 #import <CocoaCefView/CocoaCefView.h>
 
 #import <unordered_set>
@@ -123,9 +124,13 @@ static std::unordered_set<void*> sLiveInstances;
 
   // Set window info
   CefWindowInfo window_info;
+#if CEF_VERSION_MAJOR > 91
   window_info.SetAsChild((__bridge void*)(self),
                          CefRect{ 0, 0, (int)self.frame.size.width, (int)self.frame.size.height });
-
+#else
+  window_info.SetAsChild((__bridge void*)(self),
+                         0, 0, (int)self.frame.size.width, (int)self.frame.size.height);
+#endif
   CefBrowserSettings browserSettings;
   if (settings)
     [settings copyToCefBrowserSettings:browserSettings];

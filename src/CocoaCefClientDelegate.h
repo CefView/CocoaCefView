@@ -128,6 +128,16 @@ public:
   virtual void takeFocus(CefRefPtr<CefBrowser>& browser, bool next) override;
   virtual bool setFocus(CefRefPtr<CefBrowser>& browser) override;
   virtual void gotFocus(CefRefPtr<CefBrowser>& browser) override;
+  
+  // DownloadHander
+  virtual void onBeforeDownload(CefRefPtr<CefBrowser> browser,
+                                CefRefPtr<CefDownloadItem> download_item,
+                                const CefString& suggested_name,
+                                CefRefPtr<CefBeforeDownloadCallback> callback) override;
+
+  virtual void onDownloadUpdated(CefRefPtr<CefBrowser> browser,
+                                 CefRefPtr<CefDownloadItem> download_item,
+                                 CefRefPtr<CefDownloadItemCallback> callback) override;
 };
 
 NS_ASSUME_NONNULL_END

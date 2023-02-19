@@ -1,0 +1,18 @@
+//
+//  CocoaCefView_global.h
+//  CocoaCef
+//
+//  Created by Sheen Tian on 2023/2/20.
+//
+
+#ifndef CocoaCefView_global_h
+#define CocoaCefView_global_h
+
+// clang-format off
+// CEF version numbers
+#define CEF_VERSION_MAJOR @CEF_VERSION_MAJOR@
+#define CEF_VERSION_MINOR @CEF_VERSION_MINOR@
+#define CEF_VERSION_PATCH @CEF_VERSION_PATCH@
+// clang-format on
+
+#endif // CocoaCefView_global_h

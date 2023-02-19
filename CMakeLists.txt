@@ -74,6 +74,26 @@ foreach(CefViewWingTarget ${CefViewCore_HELPER_APP_TARGETS})
 endforeach(CefViewWingTarget)
 set_target_properties(libcef_dll_wrapper PROPERTIES FOLDER core)
 
+# read CEF version from cef_version.h
+file(READ "${CefViewCore_CEF_INCLUDE_DIR}/cef_version.h" cef_version_content)
+string(REGEX MATCH "#define CEF_VERSION_MAJOR ([0-9]+)" _ ${cef_version_content})
+set(CEF_VERSION_MAJOR ${CMAKE_MATCH_1})
+message(STATUS "CEF_VERSION_MAJOR: ${CEF_VERSION_MAJOR}")
+
+string(REGEX MATCH "#define CEF_VERSION_MINOR ([0-9]+)" _ ${cef_version_content})
+set(CEF_VERSION_MINOR ${CMAKE_MATCH_1})
+message(STATUS "CEF_VERSION_MINOR: ${CEF_VERSION_MINOR}")
+
+string(REGEX MATCH "#define CEF_VERSION_PATCH ([0-9]+)" _ ${cef_version_content})
+set(CEF_VERSION_PATCH ${CMAKE_MATCH_1})
+message(STATUS "CEF_VERSION_PATCH: ${CEF_VERSION_PATCH}")
+
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/CocoaCefView_global.h.in"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/CocoaCefView_global.h"
+  @ONLY
+)
+
 # Config CocoaCefView target
 ###############################################################
 add_subdirectory(src)

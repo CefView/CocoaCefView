@@ -11,6 +11,8 @@
 #import <Foundation/Foundation.h>
 #import <Cocoa/Cocoa.h>
 
+#import <CocoaCefView/CocoaCefView_global.h>
+
 NS_ASSUME_NONNULL_BEGIN
 
 /// <#Description#>
@@ -73,8 +75,10 @@ NS_ASSUME_NONNULL_BEGIN
 /// <#Description#>
 @property NSNumber* javascriptDomPaste;
 
+#if CEF_VERSION_MAJOR < 100
 /// <#Description#>
 @property NSNumber* plugins;
+#endif
 
 /// <#Description#>
 @property NSNumber* imageLoading;
