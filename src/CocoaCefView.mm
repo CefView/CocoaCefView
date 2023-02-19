@@ -475,7 +475,7 @@ static std::unordered_set<void*> sLiveInstances;
 
 #pragma mark-- Private Helper Methods
 
-- (bool)sendEventNotifyMessage:(int)frameId Event:(CocoaCefEvent*)event
+- (bool)sendEventNotifyMessage:(long long)frameId Event:(CocoaCefEvent*)event
 {
   // create the event notify message
   CefRefPtr<CefProcessMessage> msg = CefProcessMessage::Create(kCefViewClientBrowserTriggerEventMessage);
